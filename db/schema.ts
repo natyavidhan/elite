@@ -1,9 +1,20 @@
-import * as SQLite from 'expo-sqlite';
+import type { SQLiteDatabase } from 'expo-sqlite';
 
-let db: SQLite.SQLiteDatabase;
+let SQLiteModule: any = null;
+let db: any = null;
 
-export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
-  db = await SQLite.openDatabaseAsync('Elite.db');
+try {
+  SQLiteModule = require('expo-sqlite');
+} catch {
+  console.warn('expo-sqlite native module not available (web or incomplete build)');
+}
+
+export async function initDatabase(): Promise<SQLiteDatabase | null> {
+  if (!SQLiteModule) {
+    console.warn('SQLite unavailable — running without database');
+    return null;
+  }
+  db = await SQLiteModule.openDatabaseAsync('Elite.db');
   await db.execAsync(`
     PRAGMA journal_mode = WAL;
     PRAGMA foreign_keys = ON;
@@ -83,7 +94,7 @@ export async function initDatabase(): Promise<SQLite.SQLiteDatabase> {
   return db;
 }
 
-export function getDb(): SQLite.SQLiteDatabase {
+export function getDb(): SQLiteDatabase {
   if (!db) throw new Error('Database not initialized. Call initDatabase() first.');
   return db;
 }
