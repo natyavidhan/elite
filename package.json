@@ -17,6 +17,7 @@
     "expo-barcode-scanner": "~13.0.0",
     "expo-constants": "~17.0.0",
     "expo-font": "^56.0.6",
+    "expo-linear-gradient": "~14.0.0",
     "expo-linking": "~7.0.0",
     "expo-router": "~4.0.0",
     "expo-splash-screen": "~0.29.0",
