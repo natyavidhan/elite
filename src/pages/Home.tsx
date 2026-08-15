@@ -1,15 +1,13 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { format } from 'date-fns';
-import { MuscleMap } from '@/components/MuscleMap';
 import { LinkButton } from '@/components/ui/Button';
-import { today } from '@/db/schema';
-import { getMuscleVolumesForDate, getSessionSummary, type SessionSummary } from '@/db/workoutDb';
-import { getDailyTotals, type DailyTotals } from '@/db/foodDb';
-import { getRecentCardioSessions } from '@/db/cardioDb';
-import { getBodyWeightStats, type BodyWeightStats } from '@/db/bodyweightDb';
-import { getSettings, type AppSettings } from '@/db/settingsDb';
-import { formatWeight } from '@/utils/unitConversion';
-import type { CardioSession } from '@/db/schema';
+import { Plate } from '@/components/ui/Plate';
+import { ContributionHeatmap } from '@/components/ContributionHeatmap';
+import { getDailyActivity, type DailyActivity } from '@/db/insightsDb';
+
+const HomeInsights = lazy(() => import('./HomeInsights'));
+
+const HEATMAP_DAYS = 371; // 53 weeks — full year, GitHub-style
 
 function greeting(): string {
   const h = new Date().getHours();
@@ -18,25 +16,26 @@ function greeting(): string {
   return 'Good evening';
 }
 
+function computeStreak(days: DailyActivity[]): number {
+  let streak = 0;
+  for (let i = days.length - 1; i >= 0; i--) {
+    if (days[i].score > 0) streak++;
+    else break;
+  }
+  return streak;
+}
+
 export function Home() {
-  const [volumes, setVolumes] = useState<Record<string, number>>({});
-  const [workout, setWorkout] = useState<SessionSummary | undefined>();
-  const [totals, setTotals] = useState<DailyTotals>({ calories: 0, protein: 0, carbs: 0, fat: 0 });
-  const [cardioToday, setCardioToday] = useState<CardioSession | undefined>();
-  const [weightStats, setWeightStats] = useState<BodyWeightStats>({});
-  const [settings, setSettings] = useState<AppSettings | null>(null);
-  const date = today();
+  const [activity, setActivity] = useState<DailyActivity[]>([]);
 
   useEffect(() => {
-    getMuscleVolumesForDate(date).then(setVolumes);
-    getSessionSummary(date).then(setWorkout);
-    getDailyTotals(date).then(setTotals);
-    getRecentCardioSessions(5).then((sessions) => setCardioToday(sessions.find((s) => s.date === date)));
-    getBodyWeightStats().then(setWeightStats);
-    getSettings().then(setSettings);
-  }, [date]);
+    getDailyActivity(HEATMAP_DAYS).then(setActivity);
+  }, []);
 
-  const bwUnit = settings?.bodyweightUnit ?? 'kg';
+  const { streak, activeDays } = useMemo(
+    () => ({ streak: computeStreak(activity), activeDays: activity.filter((d) => d.score > 0).length }),
+    [activity],
+  );
 
   return (
     <div className="space-y-6">
@@ -45,39 +44,27 @@ export function Home() {
         <h1 className="font-display text-3xl sm:text-4xl text-ink-900 mt-1">{greeting()}</h1>
       </div>
 
-      <MuscleMap volumes={volumes} date={date} />
+      <Plate className="p-4 sm:p-6">
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="plate-caption text-xs sm:text-sm">Consistency</h2>
+          <span className="font-data text-xs text-ink-500">
+            {activeDays} tracked days {streak > 0 && `· ${streak} day streak`}
+          </span>
+        </div>
+        <ContributionHeatmap data={activity} />
+      </Plate>
 
-      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] divide-y divide-paper-400">
-        <Row
-          label="Calories"
-          value={`${Math.round(totals.calories).toLocaleString()} kcal`}
-          detail={settings ? `of ${settings.dailyCalorieGoal.toLocaleString()} goal` : undefined}
-        />
-        <Row
-          label="Macros"
-          value={`${Math.round(totals.protein)}P · ${Math.round(totals.carbs)}C · ${Math.round(totals.fat)}F`}
-          detail="grams"
-        />
-        <Row
-          label="Workout"
-          value={workout ? `${workout.exerciseCount} exercises · ${workout.setCount} sets` : 'Nothing logged yet'}
-          detail={workout ? `${Math.round(workout.totalVolume).toLocaleString()} kg·reps` : undefined}
-        />
-        <Row
-          label="Cardio"
-          value={cardioToday ? `${cardioToday.activityType} · ${Math.round(cardioToday.durationSeconds / 60)} min` : 'Nothing logged yet'}
-          detail={cardioToday?.distanceKm ? `${cardioToday.distanceKm.toFixed(2)} km` : undefined}
-        />
-        <Row
-          label="Body Weight"
-          value={weightStats.current ? formatWeight(weightStats.current, bwUnit) : 'Not logged yet'}
-          detail={
-            weightStats.current && weightStats.sevenDayAverage
-              ? `7-day avg ${formatWeight(weightStats.sevenDayAverage, bwUnit)}`
-              : undefined
-          }
-        />
-      </div>
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {[0, 1, 2, 3].map((i) => (
+              <Plate key={i} className="p-4 sm:p-5 h-32 animate-pulse" />
+            ))}
+          </div>
+        }
+      >
+        <HomeInsights />
+      </Suspense>
 
       <div className="flex flex-wrap gap-2">
         <LinkButton to="/workout/log" variant="secondary" className="flex-1">
@@ -92,18 +79,6 @@ export function Home() {
         <LinkButton to="/bodyweight" variant="secondary" className="flex-1">
           Log Weight
         </LinkButton>
-      </div>
-    </div>
-  );
-}
-
-function Row({ label, value, detail }: { label: string; value: string; detail?: string }) {
-  return (
-    <div className="flex items-center justify-between px-4 py-3 sm:px-6">
-      <span className="plate-caption text-xs text-ink-500">{label}</span>
-      <div className="text-right">
-        <div className="font-data text-sm text-ink-900">{value}</div>
-        {detail && <div className="font-data text-xs text-ink-500">{detail}</div>}
       </div>
     </div>
   );

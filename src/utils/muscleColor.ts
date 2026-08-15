@@ -1,17 +1,24 @@
 // The heatmap's material is ink on paper, not an app accent color: volume
-// reads as how much vermilion wash has been applied to that muscle today,
-// from a nearly blank plate to fully inked.
+// reads as how much vermilion wash has been applied, from a nearly blank
+// plate to fully inked. This same ramp is reused anywhere something is
+// encoded as "how much ink today" — the muscle plate, the activity
+// calendar, and the compact trend charts all speak the same material.
 
 const VERMILION_RGB = '193, 58, 42';
 const REST_RGB = '32, 27, 21';
 
-export function getMuscleColor(volumeLoad: number, maxVolume: number): string {
-  if (volumeLoad <= 0) return getRestingColor();
-  const ratio = Math.min(volumeLoad / maxVolume, 1);
-  // Floor is deliberately high: even one light set should read clearly as
-  // "trained today" against the resting wash, not blend into it.
-  const opacity = 0.24 + ratio * 0.76;
+/** ratio in [0,1] -> a vermilion wash opacity. Floor is deliberately high:
+ * even a small amount of activity should read clearly as "inked today"
+ * against the resting wash, not blend into it. */
+export function getIntensityColor(ratio: number): string {
+  if (ratio <= 0) return getRestingColor();
+  const clamped = Math.min(ratio, 1);
+  const opacity = 0.24 + clamped * 0.76;
   return `rgba(${VERMILION_RGB}, ${opacity.toFixed(2)})`;
+}
+
+export function getMuscleColor(volumeLoad: number, maxVolume: number): string {
+  return getIntensityColor(volumeLoad / maxVolume);
 }
 
 export function getRestingColor(): string {
@@ -21,3 +28,5 @@ export function getRestingColor(): string {
 export function muscleVolumeRatio(volumeLoad: number, maxVolume: number): number {
   return Math.min(volumeLoad / maxVolume, 1);
 }
+
+export const VERMILION_HEX = '#C13A2A';

@@ -92,7 +92,7 @@ export function BodyWeight() {
               />
               <Tooltip
                 formatter={(v: number) => [`${v.toFixed(1)} ${unit}`, 'Weight']}
-                labelFormatter={(d) => format(parseISO(d as string), 'EEE, MMM d')}
+                labelFormatter={(d) => (typeof d === 'string' ? format(parseISO(d), 'EEE, MMM d') : '')}
                 contentStyle={{ background: '#201B15', border: 'none', borderRadius: 2, fontSize: 12 }}
                 labelStyle={{ color: '#F6EFDF' }}
                 itemStyle={{ color: '#EFA593' }}
