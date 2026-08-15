@@ -1,4 +1,4 @@
-import { db, type CardioSession } from './schema';
+import { db, type CardioSession, type CardioPreset } from './schema';
 import { startOfWeek, isWithinInterval } from 'date-fns';
 
 export async function addCardioSession(input: Omit<CardioSession, 'id' | 'createdAt'>): Promise<number> {
@@ -44,6 +44,24 @@ export function paceMinPerKm(durationSeconds: number, distanceKm?: number): stri
   const min = Math.floor(paceSeconds / 60);
   const sec = Math.round(paceSeconds % 60);
   return `${min}:${sec.toString().padStart(2, '0')} /km`;
+}
+
+export async function getCardioPresets(): Promise<CardioPreset[]> {
+  return db.cardioPresets.toArray();
+}
+
+export type CardioPresetInput = Omit<CardioPreset, 'id' | 'createdAt'>;
+
+export async function createCardioPreset(input: CardioPresetInput): Promise<number> {
+  return db.cardioPresets.add({ ...input, createdAt: new Date().toISOString() });
+}
+
+export async function updateCardioPreset(id: number, input: CardioPresetInput): Promise<void> {
+  await db.cardioPresets.update(id, input);
+}
+
+export async function deleteCardioPreset(id: number): Promise<void> {
+  await db.cardioPresets.delete(id);
 }
 
 export interface CardioPersonalBests {

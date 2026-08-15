@@ -84,6 +84,30 @@ export interface Setting {
   value: string;
 }
 
+export interface WorkoutPresetExercise {
+  exerciseId: string;
+  sets: number;
+  reps: number;
+  weightKg: number;
+}
+
+export interface WorkoutPreset {
+  id?: number;
+  name: string;
+  exercises: WorkoutPresetExercise[];
+  createdAt: string;
+}
+
+export interface CardioPreset {
+  id?: number;
+  name: string;
+  activityType: ActivityType;
+  baseDurationSeconds: number;
+  baseDistanceKm?: number;
+  baseCaloriesBurned?: number;
+  createdAt: string;
+}
+
 class EliteDB extends Dexie {
   workoutSessions!: Table<WorkoutSession, number>;
   workoutSets!: Table<WorkoutSet, number>;
@@ -93,6 +117,8 @@ class EliteDB extends Dexie {
   cardioSessions!: Table<CardioSession, number>;
   bodyWeightLogs!: Table<BodyWeightLog, number>;
   settings!: Table<Setting, string>;
+  workoutPresets!: Table<WorkoutPreset, number>;
+  cardioPresets!: Table<CardioPreset, number>;
 
   constructor() {
     super('EliteDB');
@@ -105,6 +131,10 @@ class EliteDB extends Dexie {
       cardioSessions: '++id, date, activityType',
       bodyWeightLogs: '++id, &date',
       settings: '&key',
+    });
+    this.version(2).stores({
+      workoutPresets: '++id, name',
+      cardioPresets: '++id, name',
     });
   }
 }

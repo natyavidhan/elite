@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Search, Check } from 'lucide-react';
+import { Search, Check, Zap } from 'lucide-react';
 import { ExerciseCard } from '@/components/ExerciseCard';
 import { MuscleMap } from '@/components/MuscleMap';
 import { ConfettiBanner } from '@/components/ConfettiBanner';
 import { Button } from '@/components/ui/Button';
 import { EXERCISES, type Exercise } from '@/constants/exercises';
 import { MUSCLE_IDS, muscleDisplayName } from '@/constants/muscles';
-import { today, type WorkoutSet, type ExerciseCategory } from '@/db/schema';
+import { today, type WorkoutSet, type ExerciseCategory, type WorkoutPreset } from '@/db/schema';
 import {
   getOrCreateSession,
   getSetsForSession,
@@ -18,6 +18,8 @@ import {
   getMuscleVolumesForDate,
   getCustomExercises,
   addCustomExercise,
+  getWorkoutPresets,
+  applyWorkoutPreset,
 } from '@/db/workoutDb';
 
 export function WorkoutLogSession() {
@@ -28,6 +30,8 @@ export function WorkoutLogSession() {
   const [exerciseOrder, setExerciseOrder] = useState<string[]>([]);
   const [setsByExercise, setSetsByExercise] = useState<Record<string, WorkoutSet[]>>({});
   const [volumes, setVolumes] = useState<Record<string, number>>({});
+  const [presets, setPresets] = useState<WorkoutPreset[]>([]);
+  const [applyingPreset, setApplyingPreset] = useState(false);
   const [query, setQuery] = useState('');
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [prSetIds, setPrSetIds] = useState<Set<number>>(new Set());
@@ -37,8 +41,9 @@ export function WorkoutLogSession() {
     (async () => {
       const session = await getOrCreateSession(date);
       setSessionId(session.id!);
-      const [sets, custom] = await Promise.all([getSetsForSession(session.id!), getCustomExercises()]);
+      const [sets, custom, presetList] = await Promise.all([getSetsForSession(session.id!), getCustomExercises(), getWorkoutPresets()]);
       setCustomExercises(custom as unknown as Exercise[]);
+      setPresets(presetList);
       const grouped: Record<string, WorkoutSet[]> = {};
       const order: string[] = [];
       for (const s of sets) {
@@ -72,6 +77,31 @@ export function WorkoutLogSession() {
     setSetsByExercise((prev) => (prev[id] ? prev : { ...prev, [id]: [] }));
     setQuery('');
     setShowCustomForm(false);
+  }
+
+  async function handleApplyPreset(preset: WorkoutPreset) {
+    if (!sessionId || applyingPreset) return;
+    setApplyingPreset(true);
+    try {
+      const { sets, prSetIds: newPrSetIds } = await applyWorkoutPreset(sessionId, preset);
+      setSetsByExercise((prev) => {
+        const next = { ...prev };
+        for (const set of sets) next[set.exerciseId] = [...(next[set.exerciseId] ?? []), set];
+        return next;
+      });
+      setExerciseOrder((prev) => {
+        const next = [...prev];
+        for (const exercise of preset.exercises) if (!next.includes(exercise.exerciseId)) next.push(exercise.exerciseId);
+        return next;
+      });
+      if (newPrSetIds.length > 0) {
+        setPrSetIds((prev) => new Set([...prev, ...newPrSetIds]));
+        setConfettiTrigger((n) => n + 1);
+      }
+      refreshVolumes();
+    } finally {
+      setApplyingPreset(false);
+    }
   }
 
   async function handleAddSet(exerciseId: string, reps: number, weightKg: number) {
@@ -123,6 +153,22 @@ export function WorkoutLogSession() {
         </div>
 
         <div className="mt-5 md:mt-0 md:flex-1 min-w-0 space-y-5">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {presets.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => handleApplyPreset(p)}
+                disabled={applyingPreset}
+                className="flex items-center gap-1 text-xs px-2.5 py-1.5 border border-ink-900/25 rounded-[2px] text-ink-700 hover:border-vermilion-600 hover:text-vermilion-700 transition-colors disabled:opacity-50"
+              >
+                <Zap size={12} /> {p.name}
+              </button>
+            ))}
+            <Link to="/workout/presets" className="text-xs text-ink-500 hover:text-vermilion-600 underline underline-offset-4 ml-1">
+              {presets.length > 0 ? 'Manage Presets' : 'Create a Preset'}
+            </Link>
+          </div>
+
           <div className="relative">
             <Search size={16} className="absolute left-0 top-1/2 -translate-y-1/2 text-ink-500" />
             <input

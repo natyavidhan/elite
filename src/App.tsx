@@ -8,6 +8,8 @@ import { Home } from '@/pages/Home';
 import { Workout } from '@/pages/Workout';
 import { WorkoutLogSession } from '@/pages/WorkoutLogSession';
 import { WorkoutHistory } from '@/pages/WorkoutHistory';
+import { WorkoutPresets } from '@/pages/WorkoutPresets';
+import { CardioPresets } from '@/pages/CardioPresets';
 import { Food } from '@/pages/Food';
 import { FoodSearch } from '@/pages/FoodSearch';
 import { FoodHistory } from '@/pages/FoodHistory';
@@ -33,12 +35,14 @@ export default function App() {
               <Route path="/workout" element={<Workout />} />
               <Route path="/workout/log" element={<WorkoutLogSession />} />
               <Route path="/workout/history" element={<WorkoutHistory />} />
+              <Route path="/workout/presets" element={<WorkoutPresets />} />
               <Route path="/food" element={<Food />} />
               <Route path="/food/search" element={<FoodSearch />} />
               <Route path="/food/history" element={<FoodHistory />} />
               <Route path="/food/dishes" element={<FoodDishes />} />
               <Route path="/cardio" element={<Cardio />} />
               <Route path="/cardio/log" element={<CardioLogRun />} />
+            <Route path="/cardio/presets" element={<CardioPresets />} />
               <Route path="/bodyweight" element={<BodyWeight />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Routes>

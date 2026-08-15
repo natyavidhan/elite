@@ -1,4 +1,4 @@
-import { db, today, type WorkoutSession, type WorkoutSet } from './schema';
+import { db, today, type WorkoutSession, type WorkoutSet, type WorkoutPreset, type WorkoutPresetExercise } from './schema';
 import { findExerciseById } from '@/constants/exercises';
 
 export async function getSessionByDate(date: string): Promise<WorkoutSession | undefined> {
@@ -231,6 +231,48 @@ export async function getSessionDetail(sessionId: number): Promise<SessionExerci
     results.push({ exerciseId, exerciseName: exercise?.name ?? exerciseId, sets: byExercise.get(exerciseId)! });
   }
   return results;
+}
+
+export async function getWorkoutPresets(): Promise<WorkoutPreset[]> {
+  return db.workoutPresets.toArray();
+}
+
+export async function createWorkoutPreset(name: string, exercises: WorkoutPresetExercise[]): Promise<number> {
+  return db.workoutPresets.add({ name, exercises, createdAt: new Date().toISOString() });
+}
+
+export async function updateWorkoutPreset(id: number, name: string, exercises: WorkoutPresetExercise[]): Promise<void> {
+  await db.workoutPresets.update(id, { name, exercises });
+}
+
+export async function deleteWorkoutPreset(id: number): Promise<void> {
+  await db.workoutPresets.delete(id);
+}
+
+export interface ApplyPresetResult {
+  sets: WorkoutSet[];
+  prSetIds: number[];
+}
+
+/** Logs every set from a preset's exercises in order, going through the
+ * same addSet path (and therefore the same PR detection) as logging by
+ * hand — a preset is a shortcut for typing, not a different data path. */
+export async function applyWorkoutPreset(sessionId: number, preset: WorkoutPreset): Promise<ApplyPresetResult> {
+  const sets: WorkoutSet[] = [];
+  const prSetIds: number[] = [];
+  for (const exercise of preset.exercises) {
+    for (let i = 0; i < exercise.sets; i++) {
+      const { set, isPR } = await addSet({
+        sessionId,
+        exerciseId: exercise.exerciseId,
+        reps: exercise.reps,
+        weightKg: exercise.weightKg,
+      });
+      sets.push(set);
+      if (isPR && set.id) prSetIds.push(set.id);
+    }
+  }
+  return { sets, prSetIds };
 }
 
 export async function addCustomExercise(exercise: { id: string; name: string; primaryMuscles: string[]; secondaryMuscles: string[]; category: string }) {
