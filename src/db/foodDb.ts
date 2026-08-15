@@ -11,6 +11,10 @@ export async function getFoodItemByExternalId(externalId: string): Promise<FoodI
 }
 
 export async function upsertFoodItem(item: FoodItem): Promise<number> {
+  // Already a persisted record (e.g. a custom dish re-selected from search,
+  // which has no externalId to key off) — inserting it again would collide
+  // with its own primary key instead of just reusing it.
+  if (item.id) return item.id;
   if (item.externalId) {
     const existing = await getFoodItemByExternalId(item.externalId);
     if (existing?.id) {

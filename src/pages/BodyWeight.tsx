@@ -51,6 +51,9 @@ export function BodyWeight() {
     date: l.date,
     weight: unit === 'kg' ? l.weightKg : kgToLbs(l.weightKg),
   }));
+  const weightValues = chartData.map((d) => d.weight);
+  const yDomain: [number, number] =
+    weightValues.length > 0 ? [Math.floor(Math.min(...weightValues) - 1), Math.ceil(Math.max(...weightValues) + 1)] : [0, 1];
 
   return (
     <div className="space-y-5">
@@ -87,7 +90,8 @@ export function BodyWeight() {
                 tick={{ fontSize: 10, fill: '#7A6F5E', fontFamily: 'JetBrains Mono' }}
                 axisLine={false}
                 tickLine={false}
-                domain={['dataMin - 1', 'dataMax + 1']}
+                domain={yDomain}
+                allowDecimals={false}
                 width={40}
               />
               <Tooltip
