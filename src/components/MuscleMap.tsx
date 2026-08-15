@@ -61,7 +61,7 @@ export function MuscleMap({ volumes, date = today() }: MuscleMapProps) {
       </div>
 
       <div className="grid gap-4 p-4 sm:p-6 md:grid-cols-[minmax(0,1fr)_14rem]">
-        <div className="max-w-sm mx-auto md:mx-0 md:max-w-none w-full">
+        <div className="max-w-sm mx-auto md:mx-0 md:max-w-none w-full md:w-auto md:h-[min(64vh,640px)] md:justify-self-start">
           {side === 'front' ? (
             <MuscleMapFront volumes={volumes} activeMuscle={activeMuscle} onSelect={handleSelect} />
           ) : (

@@ -117,56 +117,62 @@ export function WorkoutLogSession() {
         <h1 className="font-display text-2xl sm:text-3xl text-ink-900 mt-1">Log Session</h1>
       </div>
 
-      <MuscleMap volumes={volumes} date={date} />
+      <div className="md:flex md:gap-6 md:items-start">
+        <div className="md:flex-none md:sticky md:top-6">
+          <MuscleMap volumes={volumes} date={date} />
+        </div>
 
-      <div className="relative">
-        <Search size={16} className="absolute left-0 top-1/2 -translate-y-1/2 text-ink-500" />
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search exercises…"
-          className="w-full bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-2 pl-6 text-sm focus:outline-none placeholder:text-ink-300"
-        />
-        {query && (
-          <div className="absolute z-10 left-0 right-0 mt-1 bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] max-h-72 overflow-y-auto">
-            {searchResults.map((e) => (
-              <button
-                key={e.id}
-                onClick={() => selectExercise(e.id)}
-                className="w-full text-left px-3 py-2 text-sm hover:bg-paper-300 transition-colors flex items-center justify-between"
-              >
-                <span>{e.name}</span>
-                <span className="plate-caption text-[9px] text-ink-500">{e.primaryMuscles.map(muscleDisplayName).join(' · ')}</span>
-              </button>
-            ))}
-            {!showCustomForm && (
-              <button
-                onClick={() => setShowCustomForm(true)}
-                className="w-full text-left px-3 py-2 text-sm text-vermilion-700 hover:bg-paper-300 transition-colors border-t hairline"
-              >
-                + Create &quot;{query}&quot; as a custom exercise
-              </button>
+        <div className="mt-5 md:mt-0 md:flex-1 min-w-0 space-y-5">
+          <div className="relative">
+            <Search size={16} className="absolute left-0 top-1/2 -translate-y-1/2 text-ink-500" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search exercises…"
+              className="w-full bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-2 pl-6 text-sm focus:outline-none placeholder:text-ink-300"
+            />
+            {query && (
+              <div className="absolute z-10 left-0 right-0 mt-1 bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] max-h-72 overflow-y-auto">
+                {searchResults.map((e) => (
+                  <button
+                    key={e.id}
+                    onClick={() => selectExercise(e.id)}
+                    className="w-full text-left px-3 py-2 text-sm hover:bg-paper-300 transition-colors flex items-center justify-between"
+                  >
+                    <span>{e.name}</span>
+                    <span className="plate-caption text-[9px] text-ink-500">{e.primaryMuscles.map(muscleDisplayName).join(' · ')}</span>
+                  </button>
+                ))}
+                {!showCustomForm && (
+                  <button
+                    onClick={() => setShowCustomForm(true)}
+                    className="w-full text-left px-3 py-2 text-sm text-vermilion-700 hover:bg-paper-300 transition-colors border-t hairline"
+                  >
+                    + Create &quot;{query}&quot; as a custom exercise
+                  </button>
+                )}
+                {showCustomForm && <CustomExerciseForm name={query} onCreated={selectExercise} onCustomExerciseAdded={(ex) => setCustomExercises((p) => [...p, ex])} />}
+              </div>
             )}
-            {showCustomForm && <CustomExerciseForm name={query} onCreated={selectExercise} onCustomExerciseAdded={(ex) => setCustomExercises((p) => [...p, ex])} />}
           </div>
-        )}
-      </div>
 
-      <div className="space-y-3">
-        {exerciseOrder.map((id) => (
-          <ExerciseCard
-            key={id}
-            name={exerciseName(id)}
-            primaryMuscles={exerciseMuscles(id)}
-            sets={setsByExercise[id] ?? []}
-            prSetIds={prSetIds}
-            onAddSet={(reps, weight) => handleAddSet(id, reps, weight)}
-            onUpdateSet={(setId, changes) => handleUpdateSet(id, setId, changes)}
-            onDeleteSet={(setId) => handleDeleteSet(id, setId)}
-          />
-        ))}
-        {exerciseOrder.length === 0 && <p className="text-sm text-ink-500 text-center py-8">Search above to add your first exercise.</p>}
+          <div className="space-y-3">
+            {exerciseOrder.map((id) => (
+              <ExerciseCard
+                key={id}
+                name={exerciseName(id)}
+                primaryMuscles={exerciseMuscles(id)}
+                sets={setsByExercise[id] ?? []}
+                prSetIds={prSetIds}
+                onAddSet={(reps, weight) => handleAddSet(id, reps, weight)}
+                onUpdateSet={(setId, changes) => handleUpdateSet(id, setId, changes)}
+                onDeleteSet={(setId) => handleDeleteSet(id, setId)}
+              />
+            ))}
+            {exerciseOrder.length === 0 && <p className="text-sm text-ink-500 text-center py-8">Search above to add your first exercise.</p>}
+          </div>
+        </div>
       </div>
 
       <div className="fixed bottom-20 md:bottom-6 right-4 md:right-8 z-20">

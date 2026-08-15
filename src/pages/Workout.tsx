@@ -22,22 +22,28 @@ export function Workout() {
         <h1 className="font-display text-3xl sm:text-4xl text-ink-900 mt-1">Workout</h1>
       </div>
 
-      <MuscleMap volumes={volumes} date={date} />
+      <div className="md:flex md:gap-6 md:items-start">
+        <div className="md:flex-none">
+          <MuscleMap volumes={volumes} date={date} />
+        </div>
 
-      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] px-4 py-3 sm:px-6 flex items-center justify-between">
-        <span className="plate-caption text-xs text-ink-500">Today&apos;s session</span>
-        <span className="font-data text-sm text-ink-900">
-          {summary ? `${summary.exerciseCount} exercises · ${summary.setCount} sets · ${Math.round(summary.totalVolume).toLocaleString()} kg·reps` : 'Nothing logged yet'}
-        </span>
-      </div>
+        <div className="mt-5 md:mt-0 md:flex-1 space-y-5">
+          <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] px-4 py-3 sm:px-6 flex items-center justify-between">
+            <span className="plate-caption text-xs text-ink-500">Today&apos;s session</span>
+            <span className="font-data text-sm text-ink-900">
+              {summary ? `${summary.exerciseCount} exercises · ${summary.setCount} sets · ${Math.round(summary.totalVolume).toLocaleString()} kg·reps` : 'Nothing logged yet'}
+            </span>
+          </div>
 
-      <div className="flex gap-2">
-        <LinkButton to="/workout/log" className="flex-1">
-          {summary && summary.setCount > 0 ? 'Continue Workout' : 'Start Workout'}
-        </LinkButton>
-        <LinkButton to="/workout/history" variant="secondary" className="flex-1">
-          View History
-        </LinkButton>
+          <div className="flex gap-2">
+            <LinkButton to="/workout/log" className="flex-1">
+              {summary && summary.setCount > 0 ? 'Continue Workout' : 'Start Workout'}
+            </LinkButton>
+            <LinkButton to="/workout/history" variant="secondary" className="flex-1">
+              View History
+            </LinkButton>
+          </div>
+        </div>
       </div>
     </div>
   );
