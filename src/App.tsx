@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { SideNav } from '@/components/SideNav';
 import { TopBar } from '@/components/TopBar';
 import { BottomNav } from '@/components/BottomNav';
+import { InstallHint } from '@/components/InstallHint';
 import { Home } from '@/pages/Home';
 import { Workout } from '@/pages/Workout';
 import { WorkoutLogSession } from '@/pages/WorkoutLogSession';
@@ -22,6 +23,7 @@ export default function App() {
     <div className="md:flex md:min-h-dvh">
       <SideNav />
       <div className="flex-1 min-w-0">
+        <InstallHint />
         <TopBar />
         <main className="pb-20 md:pb-0 max-w-5xl mx-auto px-4 py-5 sm:px-6 sm:py-8">
           <Suspense fallback={<p className="plate-caption text-xs text-ink-500">Loading…</p>}>

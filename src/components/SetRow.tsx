@@ -48,7 +48,7 @@ export function SetRow({ set, onUpdate, onDelete, isPR }: Props) {
       <button
         onClick={onDelete}
         aria-label={`Delete set ${set.setNumber}`}
-        className="ml-auto text-ink-300 hover:text-vermilion-600 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1"
+        className="ml-auto text-ink-300 hover:text-vermilion-600 p-1"
       >
         <Trash2 size={14} />
       </button>

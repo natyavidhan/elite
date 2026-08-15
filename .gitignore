@@ -1,6 +1,7 @@
 node_modules/
 .expo/
 dist/
+*.tsbuildinfo
 .claude/
 .codex/
 .agents/

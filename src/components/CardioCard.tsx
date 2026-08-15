@@ -26,7 +26,7 @@ export function CardioCard({ session, onDelete }: Props) {
         <button
           onClick={onDelete}
           aria-label="Delete session"
-          className="text-ink-300 hover:text-vermilion-600 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-1"
+          className="text-ink-300 hover:text-vermilion-600 p-1"
         >
           <Trash2 size={14} />
         </button>
