@@ -1,7 +1,7 @@
 node_modules/
 .expo/
 dist/
-.claude/settings.local.json
+.claude/
 .codex/
 .agents/
 .impeccable/

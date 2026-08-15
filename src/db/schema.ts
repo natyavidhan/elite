@@ -1,0 +1,112 @@
+import Dexie, { type Table } from 'dexie';
+
+export interface WorkoutSession {
+  id?: number;
+  date: string; // 'YYYY-MM-DD'
+  notes?: string;
+  createdAt: string;
+}
+
+export interface WorkoutSet {
+  id?: number;
+  sessionId: number;
+  exerciseId: string;
+  setNumber: number;
+  reps: number;
+  weightKg: number;
+  rpe?: number;
+  createdAt: string;
+}
+
+export type ExerciseCategory = 'strength' | 'bodyweight' | 'machine' | 'cable';
+
+export interface CustomExercise {
+  id: string;
+  name: string;
+  primaryMuscles: string[];
+  secondaryMuscles: string[];
+  category: ExerciseCategory;
+}
+
+export type FoodSource = 'openfoodfacts' | 'usda' | 'manual';
+
+export interface FoodItem {
+  id?: number;
+  externalId?: string;
+  name: string;
+  caloriesPer100g: number;
+  proteinPer100g: number;
+  carbsPer100g: number;
+  fatPer100g: number;
+  source: FoodSource;
+}
+
+export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
+
+export interface FoodLog {
+  id?: number;
+  date: string;
+  foodItemId: number;
+  mealType: MealType;
+  quantityG: number;
+  createdAt: string;
+}
+
+export type ActivityType = 'run' | 'walk' | 'cycle' | 'swim' | 'other';
+
+export interface CardioSession {
+  id?: number;
+  date: string;
+  activityType: ActivityType;
+  durationSeconds: number;
+  distanceKm?: number;
+  avgHeartRate?: number;
+  caloriesBurned?: number;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface BodyWeightLog {
+  id?: number;
+  date: string; // unique
+  weightKg: number;
+  bodyFatPct?: number;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface Setting {
+  key: string;
+  value: string;
+}
+
+class EliteDB extends Dexie {
+  workoutSessions!: Table<WorkoutSession, number>;
+  workoutSets!: Table<WorkoutSet, number>;
+  customExercises!: Table<CustomExercise, string>;
+  foodItems!: Table<FoodItem, number>;
+  foodLogs!: Table<FoodLog, number>;
+  cardioSessions!: Table<CardioSession, number>;
+  bodyWeightLogs!: Table<BodyWeightLog, number>;
+  settings!: Table<Setting, string>;
+
+  constructor() {
+    super('EliteDB');
+    this.version(1).stores({
+      workoutSessions: '++id, &date',
+      workoutSets: '++id, sessionId, exerciseId',
+      customExercises: 'id, name',
+      foodItems: '++id, &externalId, name',
+      foodLogs: '++id, date, foodItemId, mealType',
+      cardioSessions: '++id, date, activityType',
+      bodyWeightLogs: '++id, &date',
+      settings: '&key',
+    });
+  }
+}
+
+export const db = new EliteDB();
+
+export function today(): string {
+  return new Date().toLocaleDateString('en-CA'); // 'YYYY-MM-DD' in local time
+}
