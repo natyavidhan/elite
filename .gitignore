@@ -1,6 +1,11 @@
 node_modules/
 .expo/
 dist/
+.claude/settings.local.json
+.codex/
+.agents/
+.impeccable/
+skills-lock.json
 npm-debug.*
 *.jks
 *.p8
