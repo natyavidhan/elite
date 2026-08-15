@@ -1,4 +1,4 @@
-import { FRONT_VIEW_BOX, FRONT_LABELED, FRONT_UNLABELED } from '@/constants/svgFrontPaths';
+import { FRONT_VIEW_BOX, FRONT_LABELED, FRONT_UNLABELED_FILL, FRONT_UNLABELED_STROKE } from '@/constants/svgFrontPaths';
 import { MuscleSvgView } from './MuscleSvgView';
 
 interface Props {
@@ -12,7 +12,8 @@ export function MuscleMapFront({ volumes, activeMuscle, onSelect }: Props) {
     <MuscleSvgView
       viewBox={FRONT_VIEW_BOX}
       labeled={FRONT_LABELED}
-      unlabeled={FRONT_UNLABELED}
+      unlabeledFill={FRONT_UNLABELED_FILL}
+      unlabeledStroke={FRONT_UNLABELED_STROKE}
       volumes={volumes}
       activeMuscle={activeMuscle}
       onSelect={onSelect}

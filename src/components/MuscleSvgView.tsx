@@ -5,13 +5,22 @@ import { getMuscleColor } from '@/utils/muscleColor';
 interface MuscleSvgViewProps {
   viewBox: string;
   labeled: Record<string, string[]>;
-  unlabeled: string[];
+  unlabeledFill: string[];
+  unlabeledStroke: string[];
   volumes: Record<string, number>;
   activeMuscle: string | null;
   onSelect: (muscleId: string) => void;
 }
 
-export function MuscleSvgView({ viewBox, labeled, unlabeled, volumes, activeMuscle, onSelect }: MuscleSvgViewProps) {
+export function MuscleSvgView({
+  viewBox,
+  labeled,
+  unlabeledFill,
+  unlabeledStroke,
+  volumes,
+  activeMuscle,
+  onSelect,
+}: MuscleSvgViewProps) {
   const titleId = useId();
 
   return (
@@ -19,14 +28,14 @@ export function MuscleSvgView({ viewBox, labeled, unlabeled, volumes, activeMusc
       viewBox={viewBox}
       role="group"
       aria-labelledby={titleId}
-      className="w-full h-auto select-none"
+      className="w-full h-auto md:w-auto md:h-full mx-auto select-none"
       style={{ overflow: 'visible' }}
     >
       <title id={titleId}>Anatomical plate — tap a muscle group to see today&apos;s exercises</title>
 
-      {/* Decorative/skeletal linework — always present, never interactive */}
-      <g aria-hidden="true" fill="rgba(32,27,21,0.09)" stroke="rgba(32,27,21,0.16)" strokeWidth={0.75}>
-        {unlabeled.map((d, i) => (
+      {/* Shading/shadow accents from the source art — faint ink wash, never interactive */}
+      <g aria-hidden="true" fill="rgba(32,27,21,0.09)">
+        {unlabeledFill.map((d, i) => (
           <path key={i} d={d} />
         ))}
       </g>
@@ -67,6 +76,14 @@ export function MuscleSvgView({ viewBox, labeled, unlabeled, volumes, activeMusc
           </g>
         );
       })}
+
+      {/* The figure's actual line-art contour (head, torso, limb outlines) —
+          drawn last so it stays crisp over whatever is colored beneath it. */}
+      <g aria-hidden="true" fill="none" stroke="rgba(32,27,21,0.55)" strokeWidth={0.75} strokeLinecap="round" strokeLinejoin="round">
+        {unlabeledStroke.map((d, i) => (
+          <path key={i} d={d} />
+        ))}
+      </g>
     </svg>
   );
 }

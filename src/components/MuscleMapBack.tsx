@@ -1,4 +1,4 @@
-import { BACK_VIEW_BOX, BACK_LABELED, BACK_UNLABELED } from '@/constants/svgBackPaths';
+import { BACK_VIEW_BOX, BACK_LABELED, BACK_UNLABELED_FILL, BACK_UNLABELED_STROKE } from '@/constants/svgBackPaths';
 import { MuscleSvgView } from './MuscleSvgView';
 
 interface Props {
@@ -12,7 +12,8 @@ export function MuscleMapBack({ volumes, activeMuscle, onSelect }: Props) {
     <MuscleSvgView
       viewBox={BACK_VIEW_BOX}
       labeled={BACK_LABELED}
-      unlabeled={BACK_UNLABELED}
+      unlabeledFill={BACK_UNLABELED_FILL}
+      unlabeledStroke={BACK_UNLABELED_STROKE}
       volumes={volumes}
       activeMuscle={activeMuscle}
       onSelect={onSelect}
