@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Plus } from 'lucide-react';
 import { LinkButton } from '@/components/ui/Button';
@@ -39,9 +40,19 @@ export function Food() {
 
   return (
     <div className="space-y-5">
-      <div>
-        <p className="plate-caption text-xs text-ink-500">{format(new Date(), 'EEEE, MMMM d')}</p>
-        <h1 className="font-display text-3xl sm:text-4xl text-ink-900 mt-1">Food</h1>
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="plate-caption text-xs text-ink-500">{format(new Date(), 'EEEE, MMMM d')}</p>
+          <h1 className="font-display text-3xl sm:text-4xl text-ink-900 mt-1">Food</h1>
+        </div>
+        <div className="flex flex-col items-end gap-1 mt-1 text-xs">
+          <Link to="/food/dishes" className="text-ink-500 hover:text-vermilion-600 underline underline-offset-4">
+            My Dishes
+          </Link>
+          <Link to="/food/history" className="text-ink-500 hover:text-vermilion-600 underline underline-offset-4">
+            History
+          </Link>
+        </div>
       </div>
 
       <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] p-4 sm:p-6 space-y-3">

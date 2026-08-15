@@ -98,6 +98,44 @@ export async function getDailyTotals(date: string = today()): Promise<DailyTotal
   );
 }
 
+export interface DishInput {
+  name: string;
+  servingG: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+function dishToPer100g(input: DishInput): Omit<FoodItem, 'id'> {
+  const factor = 100 / input.servingG;
+  return {
+    name: input.name,
+    caloriesPer100g: input.calories * factor,
+    proteinPer100g: input.protein * factor,
+    carbsPer100g: input.carbs * factor,
+    fatPer100g: input.fat * factor,
+    source: 'manual',
+    defaultServingG: input.servingG,
+  };
+}
+
+export async function createCustomDish(input: DishInput): Promise<number> {
+  return db.foodItems.add(dishToPer100g(input));
+}
+
+export async function updateCustomDish(id: number, input: DishInput): Promise<void> {
+  await db.foodItems.update(id, dishToPer100g(input));
+}
+
+export async function deleteCustomDish(id: number): Promise<void> {
+  await db.foodItems.delete(id);
+}
+
+export async function getCustomDishes(): Promise<FoodItem[]> {
+  return db.foodItems.filter((item) => item.source === 'manual').toArray();
+}
+
 export async function getFoodDatesWithLogs(limit = 60): Promise<string[]> {
   const dates = await db.foodLogs.orderBy('date').reverse().keys();
   const unique = [...new Set(dates as string[])];

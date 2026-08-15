@@ -11,6 +11,7 @@ import { WorkoutHistory } from '@/pages/WorkoutHistory';
 import { Food } from '@/pages/Food';
 import { FoodSearch } from '@/pages/FoodSearch';
 import { FoodHistory } from '@/pages/FoodHistory';
+import { FoodDishes } from '@/pages/FoodDishes';
 import { Cardio } from '@/pages/Cardio';
 import { CardioLogRun } from '@/pages/CardioLogRun';
 import { SettingsPage } from '@/pages/Settings';
@@ -35,6 +36,7 @@ export default function App() {
               <Route path="/food" element={<Food />} />
               <Route path="/food/search" element={<FoodSearch />} />
               <Route path="/food/history" element={<FoodHistory />} />
+              <Route path="/food/dishes" element={<FoodDishes />} />
               <Route path="/cardio" element={<Cardio />} />
               <Route path="/cardio/log" element={<CardioLogRun />} />
               <Route path="/bodyweight" element={<BodyWeight />} />

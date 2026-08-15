@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Camera, ChevronLeft } from 'lucide-react';
 
 // @zxing/browser is only needed once scanning actually starts.
@@ -71,7 +71,12 @@ export function FoodSearch() {
         <ChevronLeft size={16} /> Back
       </button>
 
-      <h1 className="font-display text-2xl sm:text-3xl text-ink-900 capitalize">Add to {mealType}</h1>
+      <div className="flex items-baseline justify-between">
+        <h1 className="font-display text-2xl sm:text-3xl text-ink-900 capitalize">Add to {mealType}</h1>
+        <Link to="/food/dishes" className="text-xs text-ink-500 hover:text-vermilion-600 underline underline-offset-4">
+          My Dishes
+        </Link>
+      </div>
 
       <div className="flex items-center gap-2">
         <input
@@ -127,7 +132,7 @@ function QuantitySheet({
   onBack: () => void;
   onLogged: () => void;
 }) {
-  const [grams, setGrams] = useState('100');
+  const [grams, setGrams] = useState(String(item.defaultServingG ?? 100));
   const g = parseFloat(grams) || 0;
   const factor = g / 100;
 

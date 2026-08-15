@@ -39,6 +39,10 @@ export interface FoodItem {
   carbsPer100g: number;
   fatPer100g: number;
   source: FoodSource;
+  /** Only set on manually-created dishes — lets logging default to "one
+   * serving" instead of a bare 100g, since a home-cooked dish is usually
+   * thought of by serving, not per 100g. */
+  defaultServingG?: number;
 }
 
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
