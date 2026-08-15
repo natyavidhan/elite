@@ -1,22 +1,26 @@
 import type { Config } from 'tailwindcss';
 
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
       colors: {
+        // rgb(var(...) / <alpha-value>) is the standard pattern for a
+        // Tailwind color that swaps value under a CSS class (see .dark in
+        // index.css) while still supporting opacity modifiers like /25.
         paper: {
-          100: '#FBF6EA',
-          200: '#F6EFDF',
-          300: '#EDE3CC',
-          400: '#DDCFAE',
-          500: '#C9B891',
+          100: 'rgb(var(--color-paper-100) / <alpha-value>)',
+          200: 'rgb(var(--color-paper-200) / <alpha-value>)',
+          300: 'rgb(var(--color-paper-300) / <alpha-value>)',
+          400: 'rgb(var(--color-paper-400) / <alpha-value>)',
+          500: 'rgb(var(--color-paper-500) / <alpha-value>)',
         },
         ink: {
-          900: '#201B15',
-          700: '#4A4136',
-          500: '#7A6F5E',
-          300: '#A79C88',
+          900: 'rgb(var(--color-ink-900) / <alpha-value>)',
+          700: 'rgb(var(--color-ink-700) / <alpha-value>)',
+          500: 'rgb(var(--color-ink-500) / <alpha-value>)',
+          300: 'rgb(var(--color-ink-300) / <alpha-value>)',
         },
         vermilion: {
           300: '#EFA593',

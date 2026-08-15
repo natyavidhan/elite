@@ -4,8 +4,17 @@ import { Field } from '@/components/ui/Field';
 import { Button } from '@/components/ui/Button';
 import { getSettings, updateSettings, DEFAULT_SETTINGS, type AppSettings } from '@/db/settingsDb';
 import { exportBackup, importBackup } from '@/db/backup';
+import { useTheme } from '@/hooks/useTheme';
+import type { ThemePreference } from '@/utils/theme';
+
+const THEME_OPTIONS: { key: ThemePreference; label: string }[] = [
+  { key: 'light', label: 'Light' },
+  { key: 'dark', label: 'Dark' },
+  { key: 'system', label: 'System' },
+];
 
 export function SettingsPage() {
+  const { theme, setTheme } = useTheme();
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [saved, setSaved] = useState(false);
   const [importMessage, setImportMessage] = useState<string | null>(null);
@@ -38,6 +47,23 @@ export function SettingsPage() {
   return (
     <div className="space-y-6 max-w-md">
       <h1 className="font-display text-3xl text-ink-900">Settings</h1>
+
+      <section className="space-y-3">
+        <h2 className="plate-caption text-xs text-ink-500">Appearance</h2>
+        <div className="flex gap-1.5">
+          {THEME_OPTIONS.map((t) => (
+            <button
+              key={t.key}
+              onClick={() => setTheme(t.key)}
+              className={`text-xs px-3 py-1.5 rounded-[2px] border transition-colors ${
+                theme === t.key ? 'bg-vermilion-600 text-paper-100 border-vermilion-600' : 'border-ink-900/25 text-ink-700'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
       <section className="space-y-3">
         <h2 className="plate-caption text-xs text-ink-500">Units</h2>

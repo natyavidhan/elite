@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { parseISO, format } from 'date-fns';
 import { getIntensityColor } from '@/utils/muscleColor';
+import { useTheme } from '@/hooks/useTheme';
 import type { DailyActivity } from '@/db/insightsDb';
 
 interface Props {
@@ -13,6 +14,8 @@ const GAP = 3;
 
 export function ContributionHeatmap({ data }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
 
   const { weeks, monthMarkers } = useMemo(() => {
     if (data.length === 0) return { weeks: [], monthMarkers: [] };
@@ -75,7 +78,7 @@ export function ContributionHeatmap({ data }: Props) {
                   <div
                     key={di}
                     title={`${day.score}/4 tracked — ${format(parseISO(day.date), 'EEE, MMM d')}`}
-                    style={{ width: CELL, height: CELL, backgroundColor: getIntensityColor(day.score / 4) }}
+                    style={{ width: CELL, height: CELL, backgroundColor: getIntensityColor(day.score / 4, isDark) }}
                     className="rounded-[1.5px]"
                   />
                 ) : (
@@ -88,7 +91,7 @@ export function ContributionHeatmap({ data }: Props) {
         <div className="flex items-center gap-1.5 mt-2 justify-end">
           <span className="text-[9px] text-ink-500">Less</span>
           {[0, 0.25, 0.5, 0.75, 1].map((r) => (
-            <div key={r} style={{ width: CELL, height: CELL, backgroundColor: getIntensityColor(r) }} className="rounded-[1.5px]" />
+            <div key={r} style={{ width: CELL, height: CELL, backgroundColor: getIntensityColor(r, isDark) }} className="rounded-[1.5px]" />
           ))}
           <span className="text-[9px] text-ink-500">More</span>
         </div>

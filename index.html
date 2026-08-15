@@ -11,6 +11,14 @@
     <meta name="apple-mobile-web-app-title" content="Elite" />
     <meta name="description" content="Local-first workout, food, cardio, and body weight tracker with a live muscle-volume heatmap." />
     <title>Elite — Training Record</title>
+    <script>
+      // Applied before first paint so there's no flash of the wrong theme.
+      (function () {
+        var pref = localStorage.getItem('elite:theme') || 'system';
+        var isDark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) document.documentElement.classList.add('dark');
+      })();
+    </script>
   </head>
   <body>
     <!--

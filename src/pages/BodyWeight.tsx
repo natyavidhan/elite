@@ -13,6 +13,8 @@ import {
 } from '@/db/bodyweightDb';
 import { getSettings } from '@/db/settingsDb';
 import { formatWeight, kgToLbs } from '@/utils/unitConversion';
+import { useTheme } from '@/hooks/useTheme';
+import { THEME_COLORS } from '@/utils/theme';
 import type { BodyWeightLog } from '@/db/schema';
 
 const RANGES: { key: WeightRange; label: string }[] = [
@@ -55,6 +57,11 @@ export function BodyWeight() {
   const yDomain: [number, number] =
     weightValues.length > 0 ? [Math.floor(Math.min(...weightValues) - 1), Math.ceil(Math.max(...weightValues) + 1)] : [0, 1];
 
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+  const c = THEME_COLORS[resolvedTheme];
+  const tooltipAccent = isDark ? '#A22E20' : '#EFA593';
+
   return (
     <div className="space-y-5">
       <h1 className="font-display text-3xl sm:text-4xl text-ink-900">Body Weight</h1>
@@ -81,13 +88,13 @@ export function BodyWeight() {
               <XAxis
                 dataKey="date"
                 tickFormatter={(d) => format(parseISO(d), 'MMM d')}
-                tick={{ fontSize: 10, fill: '#7A6F5E', fontFamily: 'JetBrains Mono' }}
-                axisLine={{ stroke: '#DDCFAE' }}
+                tick={{ fontSize: 10, fill: c.ink500, fontFamily: 'JetBrains Mono' }}
+                axisLine={{ stroke: c.paper400 }}
                 tickLine={false}
                 minTickGap={30}
               />
               <YAxis
-                tick={{ fontSize: 10, fill: '#7A6F5E', fontFamily: 'JetBrains Mono' }}
+                tick={{ fontSize: 10, fill: c.ink500, fontFamily: 'JetBrains Mono' }}
                 axisLine={false}
                 tickLine={false}
                 domain={yDomain}
@@ -97,9 +104,9 @@ export function BodyWeight() {
               <Tooltip
                 formatter={(v: number) => [`${v.toFixed(1)} ${unit}`, 'Weight']}
                 labelFormatter={(d) => (typeof d === 'string' ? format(parseISO(d), 'EEE, MMM d') : '')}
-                contentStyle={{ background: '#201B15', border: 'none', borderRadius: 2, fontSize: 12 }}
-                labelStyle={{ color: '#F6EFDF' }}
-                itemStyle={{ color: '#EFA593' }}
+                contentStyle={{ background: c.ink900, border: 'none', borderRadius: 2, fontSize: 12 }}
+                labelStyle={{ color: c.paper200 }}
+                itemStyle={{ color: tooltipAccent }}
               />
               <Line type="monotone" dataKey="weight" stroke="#C13A2A" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
             </LineChart>

@@ -12,6 +12,36 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* The plate by daylight: cream paper, sumi-black ink. */
+    --color-paper-100: 251 246 234;
+    --color-paper-200: 246 239 223;
+    --color-paper-300: 237 227 204;
+    --color-paper-400: 221 207 174;
+    --color-paper-500: 201 184 145;
+    --color-ink-900: 32 27 21;
+    --color-ink-700: 74 65 54;
+    --color-ink-500: 122 111 94;
+    --color-ink-300: 167 156 136;
+    color-scheme: light;
+  }
+
+  .dark {
+    /* The same plate at night: dark charcoal ground, ink runs cream instead
+       of black — not an inverted filter, the same material under different
+       light. Vermilion is unchanged; it reads on both. */
+    --color-paper-100: 36 31 26;
+    --color-paper-200: 27 23 18;
+    --color-paper-300: 44 39 33;
+    --color-paper-400: 58 51 42;
+    --color-paper-500: 77 68 54;
+    --color-ink-900: 237 227 204;
+    --color-ink-700: 196 184 150;
+    --color-ink-500: 143 130 102;
+    --color-ink-300: 92 84 67;
+    color-scheme: dark;
+  }
+
   html {
     -webkit-tap-highlight-color: transparent;
   }
@@ -20,13 +50,13 @@
     @apply bg-paper-200 text-ink-900 font-sans antialiased;
     background-image:
       theme('backgroundImage.paper-grain'),
-      radial-gradient(circle at 50% 0%, theme('colors.paper.100'), theme('colors.paper.200') 60%);
+      radial-gradient(circle at 50% 0%, rgb(var(--color-paper-100)), rgb(var(--color-paper-200)) 60%);
     min-height: 100dvh;
   }
 
   ::selection {
     background-color: theme('colors.vermilion.600');
-    color: theme('colors.paper.100');
+    color: rgb(var(--color-paper-100));
   }
 
   /* Focus rings: visible, ink-on-vermilion, never the browser default blue */
@@ -42,15 +72,15 @@
     height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: theme('colors.paper.200');
+    background: rgb(var(--color-paper-200));
   }
   ::-webkit-scrollbar-thumb {
-    background: theme('colors.paper.500');
+    background: rgb(var(--color-paper-500));
     border-radius: 999px;
-    border: 2px solid theme('colors.paper.200');
+    border: 2px solid rgb(var(--color-paper-200));
   }
   * {
-    scrollbar-color: theme('colors.paper.500') theme('colors.paper.200');
+    scrollbar-color: rgb(var(--color-paper-500)) rgb(var(--color-paper-200));
     scrollbar-width: thin;
   }
 

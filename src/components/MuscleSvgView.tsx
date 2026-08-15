@@ -1,6 +1,7 @@
 import { useId } from 'react';
 import { MUSCLES } from '@/constants/muscles';
-import { getMuscleColor } from '@/utils/muscleColor';
+import { getMuscleColor, inkRGB } from '@/utils/muscleColor';
+import { useTheme } from '@/hooks/useTheme';
 
 interface MuscleSvgViewProps {
   viewBox: string;
@@ -22,6 +23,9 @@ export function MuscleSvgView({
   onSelect,
 }: MuscleSvgViewProps) {
   const titleId = useId();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+  const ink = inkRGB(isDark);
 
   return (
     <svg
@@ -34,7 +38,7 @@ export function MuscleSvgView({
       <title id={titleId}>Anatomical plate — tap a muscle group to see today&apos;s exercises</title>
 
       {/* Shading/shadow accents from the source art — faint ink wash, never interactive */}
-      <g aria-hidden="true" fill="rgba(32,27,21,0.09)">
+      <g aria-hidden="true" fill={`rgba(${ink},0.09)`}>
         {unlabeledFill.map((d, i) => (
           <path key={i} d={d} />
         ))}
@@ -44,7 +48,7 @@ export function MuscleSvgView({
       {Object.entries(labeled).map(([muscleId, paths]) => {
         const def = MUSCLES[muscleId];
         const volume = volumes[muscleId] ?? 0;
-        const fill = def ? getMuscleColor(volume, def.maxVolume) : getMuscleColor(0, 1);
+        const fill = def ? getMuscleColor(volume, def.maxVolume, isDark) : getMuscleColor(0, 1, isDark);
         const isActive = activeMuscle === muscleId;
         return (
           <g
@@ -68,7 +72,7 @@ export function MuscleSvgView({
                 key={i}
                 d={d}
                 fill={fill}
-                stroke={isActive ? '#8B2419' : 'rgba(32,27,21,0.35)'}
+                stroke={isActive ? '#8B2419' : `rgba(${ink},0.35)`}
                 strokeWidth={isActive ? 1.5 : 0.75}
                 style={{ transition: 'fill 700ms cubic-bezier(0.16, 1, 0.3, 1), stroke 200ms ease-out, stroke-width 200ms ease-out' }}
               />
@@ -79,7 +83,7 @@ export function MuscleSvgView({
 
       {/* The figure's actual line-art contour (head, torso, limb outlines) —
           drawn last so it stays crisp over whatever is colored beneath it. */}
-      <g aria-hidden="true" fill="none" stroke="rgba(32,27,21,0.55)" strokeWidth={0.75} strokeLinecap="round" strokeLinejoin="round">
+      <g aria-hidden="true" fill="none" stroke={`rgba(${ink},0.55)`} strokeWidth={0.75} strokeLinecap="round" strokeLinejoin="round">
         {unlabeledStroke.map((d, i) => (
           <path key={i} d={d} />
         ))}
