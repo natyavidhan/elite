@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Search, Check, Zap } from 'lucide-react';
@@ -25,7 +25,6 @@ import {
 export function WorkoutLogSession() {
   const navigate = useNavigate();
   const date = today();
-  const [sessionId, setSessionId] = useState<number | null>(null);
   const [customExercises, setCustomExercises] = useState<Exercise[]>([]);
   const [exerciseOrder, setExerciseOrder] = useState<string[]>([]);
   const [setsByExercise, setSetsByExercise] = useState<Record<string, WorkoutSet[]>>({});
@@ -36,12 +35,26 @@ export function WorkoutLogSession() {
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [prSetIds, setPrSetIds] = useState<Set<number>>(new Set());
   const [confettiTrigger, setConfettiTrigger] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
+  // Logging a set needs a real session id. The mount effect below fetches
+  // one, but a fast click (search → select → type → Add Set, all before
+  // that effect resolves) must not silently drop the set — so every caller
+  // goes through this instead of keeping the id in state. The ref caches
+  // the in-flight promise so concurrent callers share one session instead
+  // of racing to create two.
+  const sessionPromiseRef = useRef<Promise<number> | null>(null);
+  function ensureSessionId(): Promise<number> {
+    if (!sessionPromiseRef.current) {
+      sessionPromiseRef.current = getOrCreateSession(date).then((session) => session.id!);
+    }
+    return sessionPromiseRef.current;
+  }
 
   useEffect(() => {
     (async () => {
-      const session = await getOrCreateSession(date);
-      setSessionId(session.id!);
-      const [sets, custom, presetList] = await Promise.all([getSetsForSession(session.id!), getCustomExercises(), getWorkoutPresets()]);
+      const id = await ensureSessionId();
+      const [sets, custom, presetList] = await Promise.all([getSetsForSession(id), getCustomExercises(), getWorkoutPresets()]);
       setCustomExercises(custom as unknown as Exercise[]);
       setPresets(presetList);
       const grouped: Record<string, WorkoutSet[]> = {};
@@ -80,10 +93,12 @@ export function WorkoutLogSession() {
   }
 
   async function handleApplyPreset(preset: WorkoutPreset) {
-    if (!sessionId || applyingPreset) return;
+    if (applyingPreset) return;
     setApplyingPreset(true);
+    setError(null);
     try {
-      const { sets, prSetIds: newPrSetIds } = await applyWorkoutPreset(sessionId, preset);
+      const id = await ensureSessionId();
+      const { sets, prSetIds: newPrSetIds } = await applyWorkoutPreset(id, preset);
       setSetsByExercise((prev) => {
         const next = { ...prev };
         for (const set of sets) next[set.exerciseId] = [...(next[set.exerciseId] ?? []), set];
@@ -99,20 +114,27 @@ export function WorkoutLogSession() {
         setConfettiTrigger((n) => n + 1);
       }
       refreshVolumes();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not apply that preset.');
     } finally {
       setApplyingPreset(false);
     }
   }
 
   async function handleAddSet(exerciseId: string, reps: number, weightKg: number) {
-    if (!sessionId) return;
-    const { set, isPR } = await addSet({ sessionId, exerciseId, reps, weightKg });
-    setSetsByExercise((prev) => ({ ...prev, [exerciseId]: [...(prev[exerciseId] ?? []), set] }));
-    if (isPR && set.id) {
-      setPrSetIds((prev) => new Set(prev).add(set.id!));
-      setConfettiTrigger((n) => n + 1);
+    setError(null);
+    try {
+      const id = await ensureSessionId();
+      const { set, isPR } = await addSet({ sessionId: id, exerciseId, reps, weightKg });
+      setSetsByExercise((prev) => ({ ...prev, [exerciseId]: [...(prev[exerciseId] ?? []), set] }));
+      if (isPR && set.id) {
+        setPrSetIds((prev) => new Set(prev).add(set.id!));
+        setConfettiTrigger((n) => n + 1);
+      }
+      refreshVolumes();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not save that set.');
     }
-    refreshVolumes();
   }
 
   async function handleUpdateSet(exerciseId: string, setId: number, changes: Partial<Pick<WorkoutSet, 'reps' | 'weightKg' | 'rpe'>>) {
@@ -146,6 +168,15 @@ export function WorkoutLogSession() {
         <p className="plate-caption text-xs text-ink-500">{format(new Date(), 'EEEE, MMMM d')}</p>
         <h1 className="font-display text-2xl sm:text-3xl text-ink-900 mt-1">Log Session</h1>
       </div>
+
+      {error && (
+        <div className="bg-vermilion-600/10 border border-vermilion-600/40 text-vermilion-700 text-sm px-4 py-2.5 rounded-[2px] flex items-center justify-between">
+          <span>{error}</span>
+          <button onClick={() => setError(null)} className="text-xs underline underline-offset-4 shrink-0 ml-3">
+            Dismiss
+          </button>
+        </div>
+      )}
 
       <div className="md:flex md:gap-6 md:items-start">
         <div className="md:flex-none md:sticky md:top-6">
