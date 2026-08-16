@@ -61,15 +61,15 @@ export function InstallHint() {
     <div className="bg-ink-900 text-paper-100 px-4 py-2.5 flex items-center gap-3 text-xs">
       {deferredPrompt ? (
         <>
-          <Download size={15} className="text-vermilion-400 shrink-0" />
+          <Download size={15} className="text-gold-400 shrink-0" />
           <span className="flex-1">Install Elite for offline, one-tap access.</span>
-          <button onClick={handleInstallClick} className="plate-caption text-vermilion-400 hover:text-vermilion-300 shrink-0">
+          <button onClick={handleInstallClick} className="plate-caption text-gold-400 hover:text-gold-300 shrink-0">
             Install
           </button>
         </>
       ) : (
         <>
-          <Share size={14} className="text-vermilion-400 shrink-0" />
+          <Share size={14} className="text-gold-400 shrink-0" />
           <span className="flex-1">
             Add Elite to your Home Screen: tap <strong className="font-medium">Share</strong>, then{' '}
             <strong className="font-medium">Add to Home Screen</strong>.

@@ -35,7 +35,7 @@ export function WeightEntry({ existing, unit, onSaved }: Props) {
             value={weight}
             onChange={(e) => setWeight(e.target.value)}
             autoFocus
-            className="font-data w-full text-xl bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-1 focus:outline-none"
+            className="font-data w-full text-xl bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-1 focus:outline-none"
           />
         </label>
         <label className="block">
@@ -45,7 +45,7 @@ export function WeightEntry({ existing, unit, onSaved }: Props) {
             inputMode="decimal"
             value={bodyFat}
             onChange={(e) => setBodyFat(e.target.value)}
-            className="font-data w-full text-xl bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-1 focus:outline-none"
+            className="font-data w-full text-xl bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-1 focus:outline-none"
           />
         </label>
       </div>
@@ -55,7 +55,7 @@ export function WeightEntry({ existing, unit, onSaved }: Props) {
           type="text"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          className="w-full bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-1.5 text-sm focus:outline-none"
+          className="w-full bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-1.5 text-sm focus:outline-none"
         />
       </label>
       <Button onClick={handleSave} disabled={!weight} className="w-full">

@@ -18,7 +18,7 @@ export function FoodLogCard({ entry, onDelete }: Props) {
       <button
         onClick={onDelete}
         aria-label={`Remove ${entry.item.name}`}
-        className="text-ink-300 hover:text-vermilion-600 p-1 shrink-0"
+        className="text-ink-300 hover:text-gold-600 p-1 shrink-0"
       >
         <Trash2 size={14} />
       </button>

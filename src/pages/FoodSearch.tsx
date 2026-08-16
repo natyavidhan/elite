@@ -73,7 +73,7 @@ export function FoodSearch() {
 
       <div className="flex items-baseline justify-between">
         <h1 className="font-display text-2xl sm:text-3xl text-ink-900 capitalize">Add to {mealType}</h1>
-        <Link to="/food/dishes" className="text-xs text-ink-500 hover:text-vermilion-600 underline underline-offset-4">
+        <Link to="/food/dishes" className="text-xs text-ink-500 hover:text-gold-600 underline underline-offset-4">
           My Dishes
         </Link>
       </div>
@@ -85,7 +85,7 @@ export function FoodSearch() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search foods…"
-          className="flex-1 bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-2 text-sm focus:outline-none placeholder:text-ink-300"
+          className="flex-1 bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-2 text-sm focus:outline-none placeholder:text-ink-300"
         />
         <button
           onClick={() => {
@@ -93,13 +93,13 @@ export function FoodSearch() {
             setScanning(true);
           }}
           aria-label="Scan barcode"
-          className="text-ink-700 hover:text-vermilion-600 p-2 border border-ink-900/25 rounded-[2px]"
+          className="text-ink-700 hover:text-gold-600 p-2 border border-ink-900/25 rounded-[2px]"
         >
           <Camera size={18} />
         </button>
       </div>
 
-      {scanError && <p className="text-xs text-vermilion-700">{scanError}</p>}
+      {scanError && <p className="text-xs text-gold-700">{scanError}</p>}
       {searching && <p className="text-xs text-ink-500">Searching…</p>}
 
       <div className="divide-y divide-paper-400 border-t border-b hairline">
@@ -161,7 +161,7 @@ function QuantitySheet({
           inputMode="decimal"
           value={grams}
           onChange={(e) => setGrams(e.target.value)}
-          className="font-data w-full text-2xl bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-1 focus:outline-none"
+          className="font-data w-full text-2xl bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-1 focus:outline-none"
           autoFocus
         />
       </label>

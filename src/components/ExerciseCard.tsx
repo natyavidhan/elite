@@ -67,7 +67,7 @@ export function ExerciseCard({ name, primaryMuscles, sets, prSetIds, onAddSet, o
           placeholder={last ? String(last.weightKg) : 'kg'}
           value={draftWeight}
           onChange={(e) => setDraftWeight(e.target.value)}
-          className="font-data w-16 bg-transparent border-b border-ink-900/20 focus:border-vermilion-600 py-1 text-sm text-right focus:outline-none placeholder:text-ink-300"
+          className="font-data w-16 bg-transparent border-b border-ink-900/20 focus:border-gold-600 py-1 text-sm text-right focus:outline-none placeholder:text-ink-300"
           aria-label="New set weight in kilograms"
         />
         <span className="text-xs text-ink-500">kg ×</span>
@@ -77,13 +77,13 @@ export function ExerciseCard({ name, primaryMuscles, sets, prSetIds, onAddSet, o
           placeholder={last ? String(last.reps) : 'reps'}
           value={draftReps}
           onChange={(e) => setDraftReps(e.target.value)}
-          className="font-data w-12 bg-transparent border-b border-ink-900/20 focus:border-vermilion-600 py-1 text-sm text-right focus:outline-none placeholder:text-ink-300"
+          className="font-data w-12 bg-transparent border-b border-ink-900/20 focus:border-gold-600 py-1 text-sm text-right focus:outline-none placeholder:text-ink-300"
           aria-label="New set reps"
         />
         <span className="text-xs text-ink-500">reps</span>
         <button
           type="submit"
-          className="ml-auto flex items-center gap-1 text-xs text-vermilion-700 hover:text-vermilion-800 py-1 px-2 -mr-2"
+          className="ml-auto flex items-center gap-1 text-xs text-gold-700 hover:text-gold-800 py-1 px-2 -mr-2"
         >
           <Plus size={14} /> Add Set
         </button>

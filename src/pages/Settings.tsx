@@ -56,7 +56,7 @@ export function SettingsPage() {
               key={t.key}
               onClick={() => setTheme(t.key)}
               className={`text-xs px-3 py-1.5 rounded-[2px] border transition-colors ${
-                theme === t.key ? 'bg-vermilion-600 text-paper-100 border-vermilion-600' : 'border-ink-900/25 text-ink-700'
+                theme === t.key ? 'bg-gold-600 text-paper-100 border-gold-600' : 'border-ink-900/25 text-ink-700'
               }`}
             >
               {t.label}
@@ -75,7 +75,7 @@ export function SettingsPage() {
                 key={u}
                 onClick={() => save({ unitSystem: u, bodyweightUnit: u === 'metric' ? 'kg' : 'lbs' })}
                 className={`text-xs px-3 py-1.5 rounded-[2px] border capitalize transition-colors ${
-                  settings.unitSystem === u ? 'bg-vermilion-600 text-paper-100 border-vermilion-600' : 'border-ink-900/25 text-ink-700'
+                  settings.unitSystem === u ? 'bg-gold-600 text-paper-100 border-gold-600' : 'border-ink-900/25 text-ink-700'
                 }`}
               >
                 {u}
@@ -114,7 +114,7 @@ export function SettingsPage() {
           </Button>
           <input ref={fileInputRef} type="file" accept="application/json" className="hidden" onChange={handleImport} />
         </div>
-        {importMessage && <p className="text-xs text-vermilion-700">{importMessage}</p>}
+        {importMessage && <p className="text-xs text-gold-700">{importMessage}</p>}
       </section>
 
       {saved && <p className="text-xs text-ink-500">Saved.</p>}

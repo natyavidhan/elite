@@ -8,10 +8,10 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const BUTTON_VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: 'bg-vermilion-600 text-paper-100 hover:bg-vermilion-700 active:bg-vermilion-800 disabled:bg-paper-400 disabled:text-ink-500',
+  primary: 'bg-gold-600 text-paper-100 hover:bg-gold-700 active:bg-gold-800 disabled:bg-paper-400 disabled:text-ink-500',
   secondary: 'bg-transparent text-ink-900 border border-ink-900/30 hover:border-ink-900 disabled:border-paper-400 disabled:text-ink-500',
-  ghost: 'bg-transparent text-ink-700 hover:text-vermilion-600 disabled:text-ink-500',
-  danger: 'bg-transparent text-vermilion-700 border border-vermilion-700/40 hover:bg-vermilion-700 hover:text-paper-100 disabled:border-paper-400 disabled:text-ink-500',
+  ghost: 'bg-transparent text-ink-700 hover:text-gold-600 disabled:text-ink-500',
+  danger: 'bg-transparent text-gold-700 border border-gold-700/40 hover:bg-gold-700 hover:text-paper-100 disabled:border-paper-400 disabled:text-ink-500',
 };
 
 const BASE_CLASSES = 'inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium rounded-[2px] transition-colors duration-150 disabled:cursor-not-allowed';

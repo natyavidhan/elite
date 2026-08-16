@@ -47,13 +47,13 @@ export function MuscleMap({ volumes, date = today() }: MuscleMapProps) {
         <div className="flex gap-1 text-xs">
           <button
             onClick={() => setSide('front')}
-            className={`plate-caption px-2 py-1 transition-colors ${side === 'front' ? 'text-vermilion-700 underline underline-offset-4' : 'text-ink-500 hover:text-ink-700'}`}
+            className={`plate-caption px-2 py-1 transition-colors ${side === 'front' ? 'text-gold-700 underline underline-offset-4' : 'text-ink-500 hover:text-ink-700'}`}
           >
             Anterior
           </button>
           <button
             onClick={() => setSide('back')}
-            className={`plate-caption px-2 py-1 transition-colors ${side === 'back' ? 'text-vermilion-700 underline underline-offset-4' : 'text-ink-500 hover:text-ink-700'}`}
+            className={`plate-caption px-2 py-1 transition-colors ${side === 'back' ? 'text-gold-700 underline underline-offset-4' : 'text-ink-500 hover:text-ink-700'}`}
           >
             Posterior
           </button>
@@ -75,7 +75,7 @@ export function MuscleMap({ volumes, date = today() }: MuscleMapProps) {
               <li key={id}>
                 <button
                   onClick={() => handleSelect(id)}
-                  className={`w-full flex items-baseline gap-2 text-left text-sm py-0.5 transition-colors ${activeMuscle === id ? 'text-vermilion-700' : 'text-ink-900 hover:text-vermilion-600'}`}
+                  className={`w-full flex items-baseline gap-2 text-left text-sm py-0.5 transition-colors ${activeMuscle === id ? 'text-gold-700' : 'text-ink-900 hover:text-gold-600'}`}
                 >
                   <span className="font-data text-xs text-ink-500 w-5 shrink-0">{String(i + 1).padStart(2, '0')}</span>
                   <span className="flex-1 truncate">{muscleDisplayName(id)}</span>
@@ -92,7 +92,7 @@ export function MuscleMap({ volumes, date = today() }: MuscleMapProps) {
                   <li key={id}>
                     <button
                       onClick={() => handleSelect(id)}
-                      className={`w-full text-left text-xs py-0.5 transition-colors ${activeMuscle === id ? 'text-vermilion-700' : 'text-ink-500 hover:text-ink-700'}`}
+                      className={`w-full text-left text-xs py-0.5 transition-colors ${activeMuscle === id ? 'text-gold-700' : 'text-ink-500 hover:text-ink-700'}`}
                     >
                       {muscleDisplayName(id)}
                     </button>
@@ -113,7 +113,7 @@ export function MuscleMap({ volumes, date = today() }: MuscleMapProps) {
             <div className="border-t hairline px-4 py-4 sm:px-6">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="plate-caption text-xs">{muscleDisplayName(activeMuscle)} — Today</h3>
-                <button onClick={() => setActiveMuscle(null)} aria-label="Close" className="text-ink-500 hover:text-vermilion-600">
+                <button onClick={() => setActiveMuscle(null)} aria-label="Close" className="text-ink-500 hover:text-gold-600">
                   <X size={16} />
                 </button>
               </div>

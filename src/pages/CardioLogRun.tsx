@@ -77,13 +77,13 @@ export function CardioLogRun() {
             key={p.id}
             onClick={() => selectPreset(p)}
             className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-[2px] border transition-colors ${
-              selectedPresetId === p.id ? 'border-vermilion-600 text-vermilion-700' : 'border-ink-900/25 text-ink-700 hover:border-vermilion-600 hover:text-vermilion-700'
+              selectedPresetId === p.id ? 'border-gold-600 text-gold-700' : 'border-ink-900/25 text-ink-700 hover:border-gold-600 hover:text-gold-700'
             }`}
           >
             <Zap size={12} /> {p.name}
           </button>
         ))}
-        <Link to="/cardio/presets" className="text-xs text-ink-500 hover:text-vermilion-600 underline underline-offset-4 ml-1">
+        <Link to="/cardio/presets" className="text-xs text-ink-500 hover:text-gold-600 underline underline-offset-4 ml-1">
           {presets.length > 0 ? 'Manage Presets' : 'Create a Preset'}
         </Link>
       </div>
@@ -97,7 +97,7 @@ export function CardioLogRun() {
             step="0.1"
             value={multiplier}
             onChange={(e) => handleMultiplierChange(e.target.value)}
-            className="font-data w-16 bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-1 text-sm focus:outline-none"
+            className="font-data w-16 bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-1 text-sm focus:outline-none"
           />
           <span className="text-xs text-ink-500">× base session</span>
         </label>
@@ -113,7 +113,7 @@ export function CardioLogRun() {
               key={a}
               onClick={() => setActivityType(a)}
               className={`text-xs px-3 py-1.5 rounded-[2px] border capitalize transition-colors ${
-                activityType === a ? 'bg-vermilion-600 text-paper-100 border-vermilion-600' : 'border-ink-900/25 text-ink-700'
+                activityType === a ? 'bg-gold-600 text-paper-100 border-gold-600' : 'border-ink-900/25 text-ink-700'
               }`}
             >
               {a}
@@ -140,7 +140,7 @@ export function CardioLogRun() {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
-          className="w-full bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-1.5 text-sm focus:outline-none resize-none"
+          className="w-full bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-1.5 text-sm focus:outline-none resize-none"
         />
       </label>
 

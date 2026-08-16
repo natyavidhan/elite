@@ -67,13 +67,13 @@ export function FoodDishes() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => setEditing(dish)} aria-label={`Edit ${dish.name}`} className="text-ink-500 hover:text-vermilion-600 p-1.5">
+                <button onClick={() => setEditing(dish)} aria-label={`Edit ${dish.name}`} className="text-ink-500 hover:text-gold-600 p-1.5">
                   <Pencil size={14} />
                 </button>
                 <button
                   onClick={() => dish.id && handleDelete(dish.id)}
                   aria-label={`Delete ${dish.name}`}
-                  className="text-ink-300 hover:text-vermilion-600 p-1.5"
+                  className="text-ink-300 hover:text-gold-600 p-1.5"
                 >
                   <Trash2 size={14} />
                 </button>

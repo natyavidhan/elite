@@ -22,16 +22,18 @@ export default {
           500: 'rgb(var(--color-ink-500) / <alpha-value>)',
           300: 'rgb(var(--color-ink-300) / <alpha-value>)',
         },
-        vermilion: {
-          300: '#EFA593',
-          400: '#E2604A',
-          600: '#C13A2A',
-          700: '#A22E20',
-          800: '#8B2419',
+        // The highlighter — same hue in both themes, only the neutrals
+        // around it change between light and dark.
+        gold: {
+          300: '#F0D98C',
+          400: '#E0B23C',
+          600: '#B8860B',
+          700: '#96700A',
+          800: '#6B4F06',
         },
       },
       fontFamily: {
-        display: ['"Old Standard TT"', 'Georgia', 'serif'],
+        display: ['Archivo', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },

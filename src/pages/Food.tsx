@@ -46,10 +46,10 @@ export function Food() {
           <h1 className="font-display text-3xl sm:text-4xl text-ink-900 mt-1">Food</h1>
         </div>
         <div className="flex flex-col items-end gap-1 mt-1 text-xs">
-          <Link to="/food/dishes" className="text-ink-500 hover:text-vermilion-600 underline underline-offset-4">
+          <Link to="/food/dishes" className="text-ink-500 hover:text-gold-600 underline underline-offset-4">
             My Dishes
           </Link>
-          <Link to="/food/history" className="text-ink-500 hover:text-vermilion-600 underline underline-offset-4">
+          <Link to="/food/history" className="text-ink-500 hover:text-gold-600 underline underline-offset-4">
             History
           </Link>
         </div>
@@ -107,7 +107,7 @@ function MacroBar({ label, value, goal, unit, compact }: { label: string; value:
         </span>
       </div>
       <div className="h-1 bg-paper-300 rounded-full overflow-hidden">
-        <div className="h-full bg-vermilion-600 transition-all duration-500 ease-out" style={{ width: `${ratio * 100}%` }} />
+        <div className="h-full bg-gold-600 transition-all duration-500 ease-out" style={{ width: `${ratio * 100}%` }} />
       </div>
     </div>
   );

@@ -69,10 +69,10 @@ export function WorkoutPresets() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => setEditing(p)} aria-label={`Edit ${p.name}`} className="text-ink-500 hover:text-vermilion-600 p-1.5">
+                <button onClick={() => setEditing(p)} aria-label={`Edit ${p.name}`} className="text-ink-500 hover:text-gold-600 p-1.5">
                   <Pencil size={14} />
                 </button>
-                <button onClick={() => p.id && handleDelete(p.id)} aria-label={`Delete ${p.name}`} className="text-ink-300 hover:text-vermilion-600 p-1.5">
+                <button onClick={() => p.id && handleDelete(p.id)} aria-label={`Delete ${p.name}`} className="text-ink-300 hover:text-gold-600 p-1.5">
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -142,7 +142,7 @@ function PresetForm({ existing, onCancel, onSaved }: { existing?: WorkoutPreset;
           <div key={i} className="bg-paper-100 border border-paper-400 rounded-[2px] px-3 py-2.5">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-sm text-ink-900">{exerciseName(ex.exerciseId)}</span>
-              <button onClick={() => removeExercise(i)} aria-label="Remove" className="text-ink-300 hover:text-vermilion-600 p-1">
+              <button onClick={() => removeExercise(i)} aria-label="Remove" className="text-ink-300 hover:text-gold-600 p-1">
                 <Trash2 size={13} />
               </button>
             </div>
@@ -152,7 +152,7 @@ function PresetForm({ existing, onCancel, onSaved }: { existing?: WorkoutPreset;
                   type="number"
                   value={ex.sets}
                   onChange={(e) => updateExercise(i, { sets: parseInt(e.target.value, 10) || 1 })}
-                  className="w-10 bg-transparent border-b border-ink-900/20 text-right focus:outline-none focus:border-vermilion-600"
+                  className="w-10 bg-transparent border-b border-ink-900/20 text-right focus:outline-none focus:border-gold-600"
                 />
                 <span className="text-xs text-ink-500">sets</span>
               </label>
@@ -161,7 +161,7 @@ function PresetForm({ existing, onCancel, onSaved }: { existing?: WorkoutPreset;
                   type="number"
                   value={ex.reps}
                   onChange={(e) => updateExercise(i, { reps: parseInt(e.target.value, 10) || 1 })}
-                  className="w-10 bg-transparent border-b border-ink-900/20 text-right focus:outline-none focus:border-vermilion-600"
+                  className="w-10 bg-transparent border-b border-ink-900/20 text-right focus:outline-none focus:border-gold-600"
                 />
                 <span className="text-xs text-ink-500">reps</span>
               </label>
@@ -170,7 +170,7 @@ function PresetForm({ existing, onCancel, onSaved }: { existing?: WorkoutPreset;
                   type="number"
                   value={ex.weightKg}
                   onChange={(e) => updateExercise(i, { weightKg: parseFloat(e.target.value) || 0 })}
-                  className="w-14 bg-transparent border-b border-ink-900/20 text-right focus:outline-none focus:border-vermilion-600"
+                  className="w-14 bg-transparent border-b border-ink-900/20 text-right focus:outline-none focus:border-gold-600"
                 />
                 <span className="text-xs text-ink-500">kg</span>
               </label>
@@ -186,7 +186,7 @@ function PresetForm({ existing, onCancel, onSaved }: { existing?: WorkoutPreset;
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Add an exercise…"
-          className="w-full bg-transparent border-b border-ink-900/25 focus:border-vermilion-600 py-2 pl-6 text-sm focus:outline-none placeholder:text-ink-300"
+          className="w-full bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-2 pl-6 text-sm focus:outline-none placeholder:text-ink-300"
         />
         {query && results.length > 0 && (
           <div className="absolute z-10 left-0 right-0 mt-1 bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] max-h-56 overflow-y-auto">

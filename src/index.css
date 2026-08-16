@@ -1,6 +1,6 @@
-@import '@fontsource/old-standard-tt/latin-400.css';
-@import '@fontsource/old-standard-tt/latin-700.css';
-@import '@fontsource/old-standard-tt/latin-400-italic.css';
+@import '@fontsource/archivo/latin-700.css';
+@import '@fontsource/archivo/latin-800.css';
+@import '@fontsource/archivo/latin-900.css';
 @import '@fontsource/inter/latin-400.css';
 @import '@fontsource/inter/latin-500.css';
 @import '@fontsource/inter/latin-600.css';
@@ -13,32 +13,31 @@
 
 @layer base {
   :root {
-    /* The plate by daylight: cream paper, sumi-black ink. */
-    --color-paper-100: 251 246 234;
-    --color-paper-200: 246 239 223;
-    --color-paper-300: 237 227 204;
-    --color-paper-400: 221 207 174;
-    --color-paper-500: 201 184 145;
-    --color-ink-900: 32 27 21;
-    --color-ink-700: 74 65 54;
-    --color-ink-500: 122 111 94;
-    --color-ink-300: 167 156 136;
+    /* The page by daylight: dim white, dark ink text, gold highlighter. */
+    --color-paper-100: 250 249 245;
+    --color-paper-200: 242 241 234;
+    --color-paper-300: 230 227 214;
+    --color-paper-400: 214 210 190;
+    --color-paper-500: 191 185 156;
+    --color-ink-900: 32 30 25;
+    --color-ink-700: 74 71 61;
+    --color-ink-500: 121 118 95;
+    --color-ink-300: 166 163 138;
     color-scheme: light;
   }
 
   .dark {
-    /* The same plate at night: dark charcoal ground, ink runs cream instead
-       of black — not an inverted filter, the same material under different
-       light. Vermilion is unchanged; it reads on both. */
-    --color-paper-100: 36 31 26;
-    --color-paper-200: 27 23 18;
-    --color-paper-300: 44 39 33;
-    --color-paper-400: 58 51 42;
-    --color-paper-500: 77 68 54;
-    --color-ink-900: 237 227 204;
-    --color-ink-700: 196 184 150;
-    --color-ink-500: 143 130 102;
-    --color-ink-300: 92 84 67;
+    /* The same page at night: not pure black, a really dark warm charcoal —
+       the gold still reads as a highlighter, not a neon glow. */
+    --color-paper-100: 33 31 26;
+    --color-paper-200: 23 22 15;
+    --color-paper-300: 41 39 29;
+    --color-paper-400: 58 55 40;
+    --color-paper-500: 79 75 54;
+    --color-ink-900: 242 239 227;
+    --color-ink-700: 199 194 168;
+    --color-ink-500: 148 142 110;
+    --color-ink-300: 92 88 64;
     color-scheme: dark;
   }
 
@@ -55,18 +54,18 @@
   }
 
   ::selection {
-    background-color: theme('colors.vermilion.600');
+    background-color: theme('colors.gold.600');
     color: rgb(var(--color-paper-100));
   }
 
-  /* Focus rings: visible, ink-on-vermilion, never the browser default blue */
+  /* Focus rings: visible, ink-on-gold, never the browser default blue */
   :focus-visible {
-    outline: 2px solid theme('colors.vermilion.600');
+    outline: 2px solid theme('colors.gold.600');
     outline-offset: 2px;
     border-radius: 2px;
   }
 
-  /* Custom scrollbar in the plate's own ink/paper tones */
+  /* Custom scrollbar in the page's own ink/paper tones */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -90,7 +89,7 @@
   }
 
   /* Tabular numerals everywhere by default: dates, weights, reps read as a
-     column, not a ragged line, exactly like a plate's data table. */
+     column, not a ragged line, like an entry logged straight into a record. */
   body {
     font-variant-numeric: tabular-nums;
   }

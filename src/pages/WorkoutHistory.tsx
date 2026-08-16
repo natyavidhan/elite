@@ -27,7 +27,7 @@ export function WorkoutHistory() {
               key={t}
               onClick={() => setTab(t)}
               className={`plate-caption px-3 py-1.5 border-b-2 transition-colors ${
-                tab === t ? 'text-vermilion-700 border-vermilion-600' : 'text-ink-500 border-transparent hover:text-ink-700'
+                tab === t ? 'text-gold-700 border-gold-600' : 'text-ink-500 border-transparent hover:text-ink-700'
               }`}
             >
               {t === 'history' ? 'Sessions' : 'Records'}
@@ -127,7 +127,7 @@ function RecordsList() {
             <div className="flex items-center gap-3">
               <SparkLine values={trends[pr.exerciseId] ?? []} />
               <div className="text-right">
-                <div className="font-data text-sm text-vermilion-700">{pr.bestWeightKg} kg</div>
+                <div className="font-data text-sm text-gold-700">{pr.bestWeightKg} kg</div>
                 <div className="font-data text-xs text-ink-500">{Math.round(pr.bestVolume).toLocaleString()} vol</div>
               </div>
             </div>

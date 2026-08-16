@@ -24,7 +24,7 @@ export function BottomNav() {
               end={end}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-1 py-2.5 text-[11px] plate-caption tracking-normal transition-colors ${
-                  isActive ? 'text-vermilion-700' : 'text-ink-500'
+                  isActive ? 'text-gold-700' : 'text-ink-500'
                 }`
               }
             >

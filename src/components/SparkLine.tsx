@@ -19,8 +19,8 @@ export function SparkLine({ values, width = 90, height = 28 }: Props) {
 
   return (
     <svg width={width} height={height} className="overflow-visible">
-      <polyline points={points} fill="none" stroke="#C13A2A" strokeWidth={1.25} strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx={lastX} cy={lastY} r={2} fill="#C13A2A" />
+      <polyline points={points} fill="none" stroke="#B8860B" strokeWidth={1.25} strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={lastX} cy={lastY} r={2} fill="#B8860B" />
     </svg>
   );
 }

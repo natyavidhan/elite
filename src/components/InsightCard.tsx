@@ -19,11 +19,11 @@ export function InsightCard({ label, todayValue, todayDetail, data, chartType = 
   const c = THEME_COLORS[resolvedTheme];
   // The tooltip stays a solid ink-toned chip in both themes — in dark mode
   // that means a light cream chip with dark text, so it never blends into
-  // an already-dark page. The vermilion accent flips depth to match: light
-  // tint on the dark-mode-light chip needs a deeper vermilion, not a lighter one.
+  // an already-dark page. The gold accent flips depth to match: a light
+  // tint on the dark-mode-light chip needs a deeper gold, not a lighter one.
   const isDark = resolvedTheme === 'dark';
-  const cursorFill = isDark ? 'rgba(237,227,204,0.08)' : 'rgba(32,27,21,0.06)';
-  const tooltipAccent = isDark ? '#A22E20' : '#EFA593';
+  const cursorFill = isDark ? 'rgba(242,239,227,0.08)' : 'rgba(32,30,25,0.06)';
+  const tooltipAccent = isDark ? '#6B4F06' : '#F0D98C';
 
   return (
     <Plate className="p-4 sm:p-5">
@@ -43,7 +43,7 @@ export function InsightCard({ label, todayValue, todayDetail, data, chartType = 
                   labelStyle={{ color: c.paper100 }}
                   itemStyle={{ color: tooltipAccent }}
                 />
-                <Bar dataKey="value" fill="#C13A2A" radius={[1, 1, 0, 0]} />
+                <Bar dataKey="value" fill="#B8860B" radius={[1, 1, 0, 0]} />
               </BarChart>
             ) : (
               <LineChart data={data} margin={{ top: 2, right: 2, left: 2, bottom: 0 }}>
@@ -54,7 +54,7 @@ export function InsightCard({ label, todayValue, todayDetail, data, chartType = 
                   labelStyle={{ color: c.paper100 }}
                   itemStyle={{ color: tooltipAccent }}
                 />
-                <Line type="monotone" dataKey="value" stroke="#C13A2A" strokeWidth={1.75} dot={false} connectNulls />
+                <Line type="monotone" dataKey="value" stroke="#B8860B" strokeWidth={1.75} dot={false} connectNulls />
               </LineChart>
             )}
           </ResponsiveContainer>

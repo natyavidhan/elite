@@ -55,7 +55,7 @@ export function BarcodeScanner({ onDetected, onClose }: Props) {
           <video ref={videoRef} className="w-full h-full object-cover" muted playsInline />
         )}
         {!error && (
-          <div className="absolute inset-x-8 top-1/2 -translate-y-1/2 h-24 border-2 border-vermilion-500 rounded-[2px]" aria-hidden="true" />
+          <div className="absolute inset-x-8 top-1/2 -translate-y-1/2 h-24 border-2 border-gold-500 rounded-[2px]" aria-hidden="true" />
         )}
       </div>
     </div>

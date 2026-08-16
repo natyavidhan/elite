@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Sparkle } from 'lucide-react';
 
-const PLATE_COLORS = ['#C13A2A', '#201B15', '#F6EFDF', '#A22E20'];
+const PLATE_COLORS = ['#B8860B', '#201E19', '#F2F1EA', '#E0B23C'];
 
 export function celebratePR() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -41,7 +41,7 @@ export function ConfettiBanner({ message, trigger }: Props) {
       }`}
     >
       <div className="bg-ink-900 text-paper-100 px-4 py-2 rounded-[2px] shadow-plate flex items-center gap-2">
-        <Sparkle size={14} className="text-vermilion-400" strokeWidth={2} />
+        <Sparkle size={14} className="text-gold-400" strokeWidth={2} />
         <span className="plate-caption text-xs tracking-plate">{message}</span>
       </div>
     </div>

@@ -26,7 +26,7 @@ export function SetRow({ set, onUpdate, onDelete, isPR }: Props) {
           if (!isNaN(v) && v !== set.weightKg) onUpdate({ weightKg: v });
           else setWeight(String(set.weightKg));
         }}
-        className="font-data w-16 bg-transparent border-b border-ink-900/20 focus:border-vermilion-600 py-1 text-sm text-right focus:outline-none"
+        className="font-data w-16 bg-transparent border-b border-ink-900/20 focus:border-gold-600 py-1 text-sm text-right focus:outline-none"
         aria-label={`Set ${set.setNumber} weight in kilograms`}
       />
       <span className="text-xs text-ink-500">kg ×</span>
@@ -40,15 +40,15 @@ export function SetRow({ set, onUpdate, onDelete, isPR }: Props) {
           if (!isNaN(v) && v !== set.reps) onUpdate({ reps: v });
           else setReps(String(set.reps));
         }}
-        className="font-data w-12 bg-transparent border-b border-ink-900/20 focus:border-vermilion-600 py-1 text-sm text-right focus:outline-none"
+        className="font-data w-12 bg-transparent border-b border-ink-900/20 focus:border-gold-600 py-1 text-sm text-right focus:outline-none"
         aria-label={`Set ${set.setNumber} reps`}
       />
       <span className="text-xs text-ink-500">reps</span>
-      {isPR && <span className="plate-caption text-[10px] text-vermilion-700 ml-1">PR</span>}
+      {isPR && <span className="plate-caption text-[10px] text-gold-700 ml-1">PR</span>}
       <button
         onClick={onDelete}
         aria-label={`Delete set ${set.setNumber}`}
-        className="ml-auto text-ink-300 hover:text-vermilion-600 p-1"
+        className="ml-auto text-ink-300 hover:text-gold-600 p-1"
       >
         <Trash2 size={14} />
       </button>

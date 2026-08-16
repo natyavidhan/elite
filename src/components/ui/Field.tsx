@@ -15,10 +15,10 @@ export const Field = forwardRef<HTMLInputElement, Props>(function Field({ label,
         id={inputId}
         className={`w-full bg-transparent border-0 border-b py-1.5 text-base sm:text-sm text-ink-900 placeholder:text-ink-300 focus:outline-none transition-colors ${
           props.type === 'number' ? 'font-data' : ''
-        } ${error ? 'border-vermilion-600' : 'border-ink-900/25 focus:border-vermilion-600'} ${className}`}
+        } ${error ? 'border-gold-600' : 'border-ink-900/25 focus:border-gold-600'} ${className}`}
         {...props}
       />
-      {error && <span className="text-xs text-vermilion-700 mt-1 block">{error}</span>}
+      {error && <span className="text-xs text-gold-700 mt-1 block">{error}</span>}
     </label>
   );
 });

@@ -72,7 +72,7 @@ export function MuscleSvgView({
                 key={i}
                 d={d}
                 fill={fill}
-                stroke={isActive ? '#8B2419' : `rgba(${ink},0.35)`}
+                stroke={isActive ? '#6B4F06' : `rgba(${ink},0.35)`}
                 strokeWidth={isActive ? 1.5 : 0.75}
                 style={{ transition: 'fill 700ms cubic-bezier(0.16, 1, 0.3, 1), stroke 200ms ease-out, stroke-width 200ms ease-out' }}
               />

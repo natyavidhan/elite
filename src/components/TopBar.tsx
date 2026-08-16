@@ -7,7 +7,7 @@ export function TopBar() {
       <Link to="/" className="font-display text-lg text-ink-900">
         Elite
       </Link>
-      <Link to="/settings" aria-label="Settings" className="text-ink-700 hover:text-vermilion-600 p-1 -m-1">
+      <Link to="/settings" aria-label="Settings" className="text-ink-700 hover:text-gold-600 p-1 -m-1">
         <Settings size={20} strokeWidth={1.75} />
       </Link>
     </header>

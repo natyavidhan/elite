@@ -70,10 +70,10 @@ export function CardioPresets() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <button onClick={() => setEditing(p)} aria-label={`Edit ${p.name}`} className="text-ink-500 hover:text-vermilion-600 p-1.5">
+                <button onClick={() => setEditing(p)} aria-label={`Edit ${p.name}`} className="text-ink-500 hover:text-gold-600 p-1.5">
                   <Pencil size={14} />
                 </button>
-                <button onClick={() => p.id && handleDelete(p.id)} aria-label={`Delete ${p.name}`} className="text-ink-300 hover:text-vermilion-600 p-1.5">
+                <button onClick={() => p.id && handleDelete(p.id)} aria-label={`Delete ${p.name}`} className="text-ink-300 hover:text-gold-600 p-1.5">
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -126,7 +126,7 @@ function PresetForm({ existing, onCancel, onSaved }: { existing?: CardioPreset; 
               key={a}
               onClick={() => setActivityType(a)}
               className={`text-xs px-3 py-1.5 rounded-[2px] border capitalize transition-colors ${
-                activityType === a ? 'bg-vermilion-600 text-paper-100 border-vermilion-600' : 'border-ink-900/25 text-ink-700'
+                activityType === a ? 'bg-gold-600 text-paper-100 border-gold-600' : 'border-ink-900/25 text-ink-700'
               }`}
             >
               {a}

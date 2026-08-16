@@ -60,7 +60,7 @@ export function BodyWeight() {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
   const c = THEME_COLORS[resolvedTheme];
-  const tooltipAccent = isDark ? '#A22E20' : '#EFA593';
+  const tooltipAccent = isDark ? '#6B4F06' : '#F0D98C';
 
   return (
     <div className="space-y-5">
@@ -73,7 +73,7 @@ export function BodyWeight() {
               key={r.key}
               onClick={() => setRange(r.key)}
               className={`plate-caption text-[10px] px-2 py-1 transition-colors ${
-                range === r.key ? 'text-vermilion-700 underline underline-offset-4' : 'text-ink-500 hover:text-ink-700'
+                range === r.key ? 'text-gold-700 underline underline-offset-4' : 'text-ink-500 hover:text-ink-700'
               }`}
             >
               {r.label}
@@ -108,7 +108,7 @@ export function BodyWeight() {
                 labelStyle={{ color: c.paper200 }}
                 itemStyle={{ color: tooltipAccent }}
               />
-              <Line type="monotone" dataKey="weight" stroke="#C13A2A" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+              <Line type="monotone" dataKey="weight" stroke="#B8860B" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         )}
@@ -122,7 +122,7 @@ export function BodyWeight() {
             <span className="plate-caption text-xs text-ink-500">Today</span>
             <div className="font-data text-lg text-ink-900">{formatWeight(today.weightKg, unit)}</div>
           </div>
-          <button onClick={() => setEditing(true)} className="text-ink-500 hover:text-vermilion-600 p-2">
+          <button onClick={() => setEditing(true)} className="text-ink-500 hover:text-gold-600 p-2">
             <Pencil size={16} />
           </button>
         </div>
@@ -144,7 +144,7 @@ export function BodyWeight() {
               <button
                 onClick={() => log.id && handleDelete(log.id)}
                 aria-label="Delete entry"
-                className="text-ink-300 hover:text-vermilion-600 p-1"
+                className="text-ink-300 hover:text-gold-600 p-1"
               >
                 <Trash2 size={14} />
               </button>
