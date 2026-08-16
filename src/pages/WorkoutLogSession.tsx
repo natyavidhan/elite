@@ -42,11 +42,19 @@ export function WorkoutLogSession() {
   // that effect resolves) must not silently drop the set — so every caller
   // goes through this instead of keeping the id in state. The ref caches
   // the in-flight promise so concurrent callers share one session instead
-  // of racing to create two.
+  // of racing to create two. Critically: if that promise rejects, the ref
+  // is cleared so the NEXT call retries fresh — caching a rejected promise
+  // here would make one transient failure permanent for the rest of the
+  // page's life, since every future call would just replay the same error.
   const sessionPromiseRef = useRef<Promise<number> | null>(null);
   function ensureSessionId(): Promise<number> {
     if (!sessionPromiseRef.current) {
-      sessionPromiseRef.current = getOrCreateSession(date).then((session) => session.id!);
+      sessionPromiseRef.current = getOrCreateSession(date)
+        .then((session) => session.id!)
+        .catch((e) => {
+          sessionPromiseRef.current = null;
+          throw e;
+        });
     }
     return sessionPromiseRef.current;
   }

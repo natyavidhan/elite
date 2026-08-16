@@ -5,22 +5,29 @@ export async function getSessionByDate(date: string): Promise<WorkoutSession | u
   return db.workoutSessions.where('date').equals(date).first();
 }
 
-/** The `date` field carries a unique index, so a duplicate insert (e.g. two
- * concurrent callers, such as React StrictMode's double effect invocation in
- * dev) throws rather than silently creating two sessions for the same day —
- * the catch path re-reads and returns the row the other caller created. */
+/** The `date` field carries a unique index. The check-then-write below runs
+ * inside one Dexie transaction so two concurrent callers (React StrictMode's
+ * double effect invocation, a second tab, a fast click racing the initial
+ * load) serialize against each other instead of both reading "no session
+ * yet" and both trying to insert — the second transaction simply sees the
+ * first one's row once it's its turn. The catch is a last-resort fallback
+ * for the rare case a duplicate insert still lands (e.g. a concurrent
+ * writer outside this transaction entirely, such as a second browser tab's
+ * own independent transaction) — it re-reads rather than throwing. */
 export async function getOrCreateSession(date: string = today()): Promise<WorkoutSession> {
-  const existing = await getSessionByDate(date);
-  if (existing) return existing;
-  const createdAt = new Date().toISOString();
-  try {
-    const id = await db.workoutSessions.add({ date, createdAt });
-    return { id, date, createdAt };
-  } catch {
-    const winner = await getSessionByDate(date);
-    if (winner) return winner;
-    throw new Error(`Failed to create or find a workout session for ${date}`);
-  }
+  return db.transaction('rw', db.workoutSessions, async () => {
+    const existing = await getSessionByDate(date);
+    if (existing) return existing;
+    const createdAt = new Date().toISOString();
+    try {
+      const id = await db.workoutSessions.add({ date, createdAt });
+      return { id, date, createdAt };
+    } catch {
+      const winner = await getSessionByDate(date);
+      if (winner) return winner;
+      throw new Error(`Failed to create or find a workout session for ${date}`);
+    }
+  });
 }
 
 export async function getSetsForSession(sessionId: number): Promise<WorkoutSet[]> {

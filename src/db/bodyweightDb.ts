@@ -3,18 +3,22 @@ import { subDays, isAfter } from 'date-fns';
 
 export async function upsertBodyWeight(input: { date?: string; weightKg: number; bodyFatPct?: number; notes?: string }): Promise<void> {
   const date = input.date ?? today();
-  const existing = await db.bodyWeightLogs.where('date').equals(date).first();
-  if (existing?.id) {
-    await db.bodyWeightLogs.update(existing.id, { weightKg: input.weightKg, bodyFatPct: input.bodyFatPct, notes: input.notes });
-    return;
-  }
-  try {
-    await db.bodyWeightLogs.add({ date, weightKg: input.weightKg, bodyFatPct: input.bodyFatPct, notes: input.notes, createdAt: new Date().toISOString() });
-  } catch {
-    // `date` is uniquely indexed — a concurrent caller may have just inserted it first.
-    const winner = await db.bodyWeightLogs.where('date').equals(date).first();
-    if (winner?.id) await db.bodyWeightLogs.update(winner.id, { weightKg: input.weightKg, bodyFatPct: input.bodyFatPct, notes: input.notes });
-  }
+  // Check-then-write runs in one transaction so two concurrent callers
+  // serialize instead of both reading "no row yet" and both inserting.
+  await db.transaction('rw', db.bodyWeightLogs, async () => {
+    const existing = await db.bodyWeightLogs.where('date').equals(date).first();
+    if (existing?.id) {
+      await db.bodyWeightLogs.update(existing.id, { weightKg: input.weightKg, bodyFatPct: input.bodyFatPct, notes: input.notes });
+      return;
+    }
+    try {
+      await db.bodyWeightLogs.add({ date, weightKg: input.weightKg, bodyFatPct: input.bodyFatPct, notes: input.notes, createdAt: new Date().toISOString() });
+    } catch {
+      // `date` is uniquely indexed — a concurrent writer outside this transaction may have just inserted it first.
+      const winner = await db.bodyWeightLogs.where('date').equals(date).first();
+      if (winner?.id) await db.bodyWeightLogs.update(winner.id, { weightKg: input.weightKg, bodyFatPct: input.bodyFatPct, notes: input.notes });
+    }
+  });
 }
 
 export async function deleteBodyWeightLog(id: number) {

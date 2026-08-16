@@ -15,8 +15,13 @@ export async function upsertFoodItem(item: FoodItem): Promise<number> {
   // which has no externalId to key off) — inserting it again would collide
   // with its own primary key instead of just reusing it.
   if (item.id) return item.id;
-  if (item.externalId) {
-    const existing = await getFoodItemByExternalId(item.externalId);
+  if (!item.externalId) return db.foodItems.add(item);
+
+  const externalId = item.externalId;
+  // Check-then-write runs in one transaction so two concurrent callers
+  // serialize instead of both reading "no row yet" and both inserting.
+  return db.transaction('rw', db.foodItems, async () => {
+    const existing = await getFoodItemByExternalId(externalId);
     if (existing?.id) {
       await db.foodItems.update(existing.id, item);
       return existing.id;
@@ -24,13 +29,12 @@ export async function upsertFoodItem(item: FoodItem): Promise<number> {
     try {
       return await db.foodItems.add(item);
     } catch {
-      // `externalId` is uniquely indexed — a concurrent caller may have just inserted it first.
-      const winner = await getFoodItemByExternalId(item.externalId);
+      // `externalId` is uniquely indexed — a concurrent writer outside this transaction may have just inserted it first.
+      const winner = await getFoodItemByExternalId(externalId);
       if (winner?.id) return winner.id;
-      throw new Error(`Failed to create or find food item ${item.externalId}`);
+      throw new Error(`Failed to create or find food item ${externalId}`);
     }
-  }
-  return db.foodItems.add(item);
+  });
 }
 
 export async function getFoodItem(id: number): Promise<FoodItem | undefined> {
