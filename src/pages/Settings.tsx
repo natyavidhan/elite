@@ -55,7 +55,7 @@ export function SettingsPage() {
             <button
               key={t.key}
               onClick={() => setTheme(t.key)}
-              className={`text-xs px-3 py-1.5 rounded-[2px] border transition-colors ${
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                 theme === t.key ? 'bg-gold-600 text-paper-100 border-gold-600' : 'border-ink-900/25 text-ink-700'
               }`}
             >
@@ -74,7 +74,7 @@ export function SettingsPage() {
               <button
                 key={u}
                 onClick={() => save({ unitSystem: u, bodyweightUnit: u === 'metric' ? 'kg' : 'lbs' })}
-                className={`text-xs px-3 py-1.5 rounded-[2px] border capitalize transition-colors ${
+                className={`text-xs px-3 py-1.5 rounded-lg border capitalize transition-colors ${
                   settings.unitSystem === u ? 'bg-gold-600 text-paper-100 border-gold-600' : 'border-ink-900/25 text-ink-700'
                 }`}
               >

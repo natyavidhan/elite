@@ -41,7 +41,11 @@ export default {
         plate: '0.08em',
       },
       boxShadow: {
-        plate: '0 1px 0 0 rgba(32, 27, 21, 0.08), 0 8px 20px -12px rgba(32, 27, 21, 0.25)',
+        plate: '0 1px 0 0 rgba(32, 30, 25, 0.08), 0 8px 20px -12px rgba(32, 30, 25, 0.25)',
+        // A button actually lifting off the page on hover, settling back
+        // down on press — the one place in this app something is meant to
+        // feel physically liftable, not just paper.
+        lift: '0 6px 16px -4px rgba(32, 30, 25, 0.3), 0 2px 6px -2px rgba(32, 30, 25, 0.18)',
       },
       backgroundImage: {
         'paper-grain': "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E\")",

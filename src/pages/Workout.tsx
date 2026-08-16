@@ -28,7 +28,7 @@ export function Workout() {
         </div>
 
         <div className="mt-5 md:mt-0 md:flex-1 space-y-5">
-          <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] px-4 py-3 sm:px-6 flex items-center justify-between">
+          <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg px-4 py-3 sm:px-6 flex items-center justify-between">
             <span className="plate-caption text-xs text-ink-500">Today&apos;s session</span>
             <span className="font-data text-sm text-ink-900">
               {summary ? `${summary.exerciseCount} exercises · ${summary.setCount} sets · ${Math.round(summary.totalVolume).toLocaleString()} kg·reps` : 'Nothing logged yet'}

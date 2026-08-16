@@ -76,7 +76,7 @@ export function CardioLogRun() {
           <button
             key={p.id}
             onClick={() => selectPreset(p)}
-            className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-[2px] border transition-colors ${
+            className={`flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border transition-colors ${
               selectedPresetId === p.id ? 'border-gold-600 text-gold-700' : 'border-ink-900/25 text-ink-700 hover:border-gold-600 hover:text-gold-700'
             }`}
           >
@@ -112,7 +112,7 @@ export function CardioLogRun() {
             <button
               key={a}
               onClick={() => setActivityType(a)}
-              className={`text-xs px-3 py-1.5 rounded-[2px] border capitalize transition-colors ${
+              className={`text-xs px-3 py-1.5 rounded-lg border capitalize transition-colors ${
                 activityType === a ? 'bg-gold-600 text-paper-100 border-gold-600' : 'border-ink-900/25 text-ink-700'
               }`}
             >

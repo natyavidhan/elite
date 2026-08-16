@@ -125,7 +125,7 @@ function PresetForm({ existing, onCancel, onSaved }: { existing?: CardioPreset; 
             <button
               key={a}
               onClick={() => setActivityType(a)}
-              className={`text-xs px-3 py-1.5 rounded-[2px] border capitalize transition-colors ${
+              className={`text-xs px-3 py-1.5 rounded-lg border capitalize transition-colors ${
                 activityType === a ? 'bg-gold-600 text-paper-100 border-gold-600' : 'border-ink-900/25 text-ink-700'
               }`}
             >

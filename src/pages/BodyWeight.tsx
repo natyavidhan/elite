@@ -66,7 +66,7 @@ export function BodyWeight() {
     <div className="space-y-5">
       <h1 className="font-display text-3xl sm:text-4xl text-ink-900">Body Weight</h1>
 
-      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] p-4 sm:p-6">
+      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg p-4 sm:p-6">
         <div className="flex justify-end gap-1 mb-2">
           {RANGES.map((r) => (
             <button
@@ -104,7 +104,7 @@ export function BodyWeight() {
               <Tooltip
                 formatter={(v: number) => [`${v.toFixed(1)} ${unit}`, 'Weight']}
                 labelFormatter={(d) => (typeof d === 'string' ? format(parseISO(d), 'EEE, MMM d') : '')}
-                contentStyle={{ background: c.ink900, border: 'none', borderRadius: 2, fontSize: 12 }}
+                contentStyle={{ background: c.ink900, border: 'none', borderRadius: 6, fontSize: 12 }}
                 labelStyle={{ color: c.paper200 }}
                 itemStyle={{ color: tooltipAccent }}
               />
@@ -117,7 +117,7 @@ export function BodyWeight() {
       {editing || !today ? (
         <WeightEntry existing={today} unit={unit} onSaved={() => { setEditing(false); refresh(); }} />
       ) : (
-        <div className="bg-paper-100 border border-paper-400 rounded-[2px] px-4 py-3 sm:px-6 flex items-center justify-between">
+        <div className="bg-paper-100 border border-paper-400 rounded-lg px-4 py-3 sm:px-6 flex items-center justify-between">
           <div>
             <span className="plate-caption text-xs text-ink-500">Today</span>
             <div className="font-data text-lg text-ink-900">{formatWeight(today.weightKg, unit)}</div>
@@ -128,14 +128,14 @@ export function BodyWeight() {
         </div>
       )}
 
-      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] divide-y divide-paper-400">
+      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg divide-y divide-paper-400">
         <StatRow label="Current" value={stats.current ? formatWeight(stats.current, unit) : '—'} />
         <StatRow label="Starting" value={stats.starting ? formatWeight(stats.starting, unit) : '—'} />
         <StatRow label="Change" value={stats.changeKg !== undefined ? `${stats.changeKg >= 0 ? '+' : ''}${formatWeight(stats.changeKg, unit)}` : '—'} />
         <StatRow label="7-Day Avg" value={stats.sevenDayAverage ? formatWeight(stats.sevenDayAverage, unit) : '—'} />
       </div>
 
-      <div className="bg-paper-100 border border-paper-400 rounded-[2px] px-4 sm:px-6 divide-y divide-paper-300">
+      <div className="bg-paper-100 border border-paper-400 rounded-lg px-4 sm:px-6 divide-y divide-paper-300">
         {[...logs].reverse().map((log) => (
           <div key={log.id} className="flex items-center justify-between py-2.5 group">
             <span className="text-sm text-ink-900">{format(parseISO(log.date), 'EEE, MMM d')}</span>

@@ -29,7 +29,7 @@ export function ExerciseCard({ name, primaryMuscles, sets, prSetIds, onAddSet, o
   }
 
   return (
-    <div className="bg-paper-100 border border-paper-400 rounded-[2px] px-4 py-3">
+    <div className="bg-paper-100 border border-paper-400 rounded-lg px-4 py-3">
       <div className="flex items-baseline justify-between mb-1">
         <h3 className="text-sm font-medium text-ink-900">{name}</h3>
         <div className="flex gap-1">

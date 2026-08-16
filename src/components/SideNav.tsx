@@ -23,7 +23,7 @@ export function SideNav() {
               to={to}
               end={end}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-2 py-2 text-sm rounded-[2px] transition-colors ${
+                `flex items-center gap-3 px-2 py-2 text-sm rounded-lg transition-colors ${
                   isActive ? 'text-gold-700 bg-gold-300/10' : 'text-ink-700 hover:text-ink-900 hover:bg-paper-300'
                 }`
               }
@@ -37,7 +37,7 @@ export function SideNav() {
       <NavLink
         to="/settings"
         className={({ isActive }) =>
-          `flex items-center gap-3 px-2 py-2 text-sm rounded-[2px] transition-colors ${
+          `flex items-center gap-3 px-2 py-2 text-sm rounded-lg transition-colors ${
             isActive ? 'text-gold-700 bg-gold-300/10' : 'text-ink-700 hover:text-ink-900 hover:bg-paper-300'
           }`
         }

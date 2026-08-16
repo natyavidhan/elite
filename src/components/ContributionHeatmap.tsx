@@ -79,7 +79,7 @@ export function ContributionHeatmap({ data }: Props) {
                     key={di}
                     title={`${day.score}/4 tracked — ${format(parseISO(day.date), 'EEE, MMM d')}`}
                     style={{ width: CELL, height: CELL, backgroundColor: getIntensityColor(day.score / 4, isDark) }}
-                    className="rounded-[1.5px]"
+                    className="rounded-[3px]"
                   />
                 ) : (
                   <div key={di} style={{ width: CELL, height: CELL }} />
@@ -91,7 +91,7 @@ export function ContributionHeatmap({ data }: Props) {
         <div className="flex items-center gap-1.5 mt-2 justify-end">
           <span className="text-[9px] text-ink-500">Less</span>
           {[0, 0.25, 0.5, 0.75, 1].map((r) => (
-            <div key={r} style={{ width: CELL, height: CELL, backgroundColor: getIntensityColor(r, isDark) }} className="rounded-[1.5px]" />
+            <div key={r} style={{ width: CELL, height: CELL, backgroundColor: getIntensityColor(r, isDark) }} className="rounded-[3px]" />
           ))}
           <span className="text-[9px] text-ink-500">More</span>
         </div>

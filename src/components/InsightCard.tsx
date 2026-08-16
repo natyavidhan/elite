@@ -39,18 +39,18 @@ export function InsightCard({ label, todayValue, todayDetail, data, chartType = 
                   cursor={{ fill: cursorFill }}
                   formatter={(v: number) => [`${Math.round(v).toLocaleString()}${unit}`, undefined]}
                   labelFormatter={(d) => (typeof d === 'string' ? format(parseISO(d), 'EEE, MMM d') : '')}
-                  contentStyle={{ background: c.ink900, border: 'none', borderRadius: 2, fontSize: 11, padding: '4px 8px' }}
+                  contentStyle={{ background: c.ink900, border: 'none', borderRadius: 6, fontSize: 11, padding: '4px 8px' }}
                   labelStyle={{ color: c.paper100 }}
                   itemStyle={{ color: tooltipAccent }}
                 />
-                <Bar dataKey="value" fill="#B8860B" radius={[1, 1, 0, 0]} />
+                <Bar dataKey="value" fill="#B8860B" radius={[2, 2, 0, 0]} />
               </BarChart>
             ) : (
               <LineChart data={data} margin={{ top: 2, right: 2, left: 2, bottom: 0 }}>
                 <Tooltip
                   formatter={(v: number) => [`${v.toFixed(1)}${unit}`, undefined]}
                   labelFormatter={(d) => (typeof d === 'string' ? format(parseISO(d), 'EEE, MMM d') : '')}
-                  contentStyle={{ background: c.ink900, border: 'none', borderRadius: 2, fontSize: 11, padding: '4px 8px' }}
+                  contentStyle={{ background: c.ink900, border: 'none', borderRadius: 6, fontSize: 11, padding: '4px 8px' }}
                   labelStyle={{ color: c.paper100 }}
                   itemStyle={{ color: tooltipAccent }}
                 />

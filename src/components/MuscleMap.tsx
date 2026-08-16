@@ -41,7 +41,7 @@ export function MuscleMap({ volumes, date = today() }: MuscleMapProps) {
   const resting = Object.keys(MUSCLES).filter((id) => !trainedIds.has(id));
 
   return (
-    <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px]">
+    <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg">
       <div className="flex items-center justify-between px-4 pt-4 sm:px-6 sm:pt-5">
         <h2 className="plate-caption text-xs sm:text-sm">Plate — Today&apos;s Training</h2>
         <div className="flex gap-1 text-xs">

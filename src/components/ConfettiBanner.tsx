@@ -40,7 +40,7 @@ export function ConfettiBanner({ message, trigger }: Props) {
         visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
       }`}
     >
-      <div className="bg-ink-900 text-paper-100 px-4 py-2 rounded-[2px] shadow-plate flex items-center gap-2">
+      <div className="bg-ink-900 text-paper-100 px-4 py-2 rounded-lg shadow-plate flex items-center gap-2">
         <Sparkle size={14} className="text-gold-400" strokeWidth={2} />
         <span className="plate-caption text-xs tracking-plate">{message}</span>
       </div>

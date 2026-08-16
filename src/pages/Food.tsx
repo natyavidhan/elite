@@ -55,7 +55,7 @@ export function Food() {
         </div>
       </div>
 
-      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] p-4 sm:p-6 space-y-3">
+      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg p-4 sm:p-6 space-y-3">
         <MacroBar
           label="Calories"
           value={totals.calories}
@@ -73,7 +73,7 @@ export function Food() {
         const mealEntries = entries.filter((e) => e.log.mealType === type);
         const subtotal = mealEntries.reduce((sum, e) => sum + e.calories, 0);
         return (
-          <div key={type} className="bg-paper-100 border border-paper-400 rounded-[2px] px-4 py-3 sm:px-6">
+          <div key={type} className="bg-paper-100 border border-paper-400 rounded-lg px-4 py-3 sm:px-6">
             <div className="flex items-center justify-between mb-1">
               <h2 className="plate-caption text-xs">{label}</h2>
               <span className="font-data text-xs text-ink-500">{Math.round(subtotal)} kcal</span>

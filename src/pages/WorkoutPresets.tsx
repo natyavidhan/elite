@@ -139,7 +139,7 @@ function PresetForm({ existing, onCancel, onSaved }: { existing?: WorkoutPreset;
 
       <div className="space-y-2">
         {exercises.map((ex, i) => (
-          <div key={i} className="bg-paper-100 border border-paper-400 rounded-[2px] px-3 py-2.5">
+          <div key={i} className="bg-paper-100 border border-paper-400 rounded-lg px-3 py-2.5">
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-sm text-ink-900">{exerciseName(ex.exerciseId)}</span>
               <button onClick={() => removeExercise(i)} aria-label="Remove" className="text-ink-300 hover:text-gold-600 p-1">
@@ -189,7 +189,7 @@ function PresetForm({ existing, onCancel, onSaved }: { existing?: WorkoutPreset;
           className="w-full bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-2 pl-6 text-sm focus:outline-none placeholder:text-ink-300"
         />
         {query && results.length > 0 && (
-          <div className="absolute z-10 left-0 right-0 mt-1 bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] max-h-56 overflow-y-auto">
+          <div className="absolute z-10 left-0 right-0 mt-1 bg-paper-100 border border-paper-400 shadow-plate rounded-lg max-h-56 overflow-y-auto">
             {results.map((e) => (
               <button
                 key={e.id}

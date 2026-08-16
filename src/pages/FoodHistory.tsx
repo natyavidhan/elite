@@ -38,7 +38,7 @@ export function FoodHistory() {
   return (
     <div className="space-y-5">
       <h1 className="font-display text-3xl text-ink-900">Food History</h1>
-      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] divide-y divide-paper-400">
+      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg divide-y divide-paper-400">
         {dates.map((date) => (
           <div key={date}>
             <button

@@ -63,7 +63,7 @@ function SessionList() {
   }
 
   return (
-    <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] divide-y divide-paper-400">
+    <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg divide-y divide-paper-400">
       {sessions.map(({ session, exerciseCount, setCount, totalVolume }) => (
         <div key={session.id}>
           <button
@@ -113,7 +113,7 @@ function RecordsList() {
   }
 
   return (
-    <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] divide-y divide-paper-400">
+    <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg divide-y divide-paper-400">
       {prs.map((pr) => {
         const exercise = findExerciseById(pr.exerciseId);
         return (

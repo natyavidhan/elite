@@ -93,7 +93,7 @@ export function FoodSearch() {
             setScanning(true);
           }}
           aria-label="Scan barcode"
-          className="text-ink-700 hover:text-gold-600 p-2 border border-ink-900/25 rounded-[2px]"
+          className="text-ink-700 hover:text-gold-600 p-2 border border-ink-900/25 rounded-lg"
         >
           <Camera size={18} />
         </button>
@@ -166,7 +166,7 @@ function QuantitySheet({
         />
       </label>
 
-      <div className="bg-paper-100 border border-paper-400 rounded-[2px] divide-y divide-paper-400">
+      <div className="bg-paper-100 border border-paper-400 rounded-lg divide-y divide-paper-400">
         <PreviewRow label="Calories" value={`${Math.round(item.caloriesPer100g * factor)} kcal`} />
         <PreviewRow label="Protein" value={`${Math.round(item.proteinPer100g * factor)} g`} />
         <PreviewRow label="Carbs" value={`${Math.round(item.carbsPer100g * factor)} g`} />

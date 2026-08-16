@@ -178,7 +178,7 @@ export function WorkoutLogSession() {
       </div>
 
       {error && (
-        <div className="bg-gold-600/10 border border-gold-600/40 text-gold-700 text-sm px-4 py-2.5 rounded-[2px] flex items-center justify-between">
+        <div className="bg-gold-600/10 border border-gold-600/40 text-gold-700 text-sm px-4 py-2.5 rounded-lg flex items-center justify-between">
           <span>{error}</span>
           <button onClick={() => setError(null)} className="text-xs underline underline-offset-4 shrink-0 ml-3">
             Dismiss
@@ -198,7 +198,7 @@ export function WorkoutLogSession() {
                 key={p.id}
                 onClick={() => handleApplyPreset(p)}
                 disabled={applyingPreset}
-                className="flex items-center gap-1 text-xs px-2.5 py-1.5 border border-ink-900/25 rounded-[2px] text-ink-700 hover:border-gold-600 hover:text-gold-700 transition-colors disabled:opacity-50"
+                className="flex items-center gap-1 text-xs px-2.5 py-1.5 border border-ink-900/25 rounded-lg text-ink-700 hover:border-gold-600 hover:text-gold-700 transition-colors disabled:opacity-50"
               >
                 <Zap size={12} /> {p.name}
               </button>
@@ -218,7 +218,7 @@ export function WorkoutLogSession() {
               className="w-full bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-2 pl-6 text-sm focus:outline-none placeholder:text-ink-300"
             />
             {query && (
-              <div className="absolute z-10 left-0 right-0 mt-1 bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] max-h-72 overflow-y-auto">
+              <div className="absolute z-10 left-0 right-0 mt-1 bg-paper-100 border border-paper-400 shadow-plate rounded-lg max-h-72 overflow-y-auto">
                 {searchResults.map((e) => (
                   <button
                     key={e.id}
@@ -298,7 +298,7 @@ function CustomExerciseForm({
           <button
             key={id}
             onClick={() => setPrimary((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]))}
-            className={`text-xs px-2 py-1 rounded-[2px] border transition-colors ${
+            className={`text-xs px-2 py-1 rounded-lg border transition-colors ${
               primary.includes(id) ? 'bg-gold-600 text-paper-100 border-gold-600' : 'border-ink-900/25 text-ink-700'
             }`}
           >

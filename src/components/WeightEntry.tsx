@@ -25,7 +25,7 @@ export function WeightEntry({ existing, unit, onSaved }: Props) {
   }
 
   return (
-    <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] p-4 sm:p-6 space-y-3">
+    <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg p-4 sm:p-6 space-y-3">
       <div className="grid grid-cols-2 gap-4">
         <label className="block">
           <span className="plate-caption text-[10px] block mb-1">Weight ({unit})</span>

@@ -28,7 +28,7 @@ export function Cardio() {
     <div className="space-y-5">
       <h1 className="font-display text-3xl sm:text-4xl text-ink-900">Cardio</h1>
 
-      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-[2px] divide-y divide-paper-400">
+      <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg divide-y divide-paper-400">
         <RowStat label="This Week" value={`${weekly.totalKm.toFixed(1)} km · ${Math.round(weekly.totalSeconds / 60)} min · ${weekly.sessionCount} sessions`} />
         {bests.longestRunKm !== undefined && <RowStat label="Longest Run" value={`${bests.longestRunKm.toFixed(2)} km`} />}
         {bests.fastestPace && <RowStat label="Fastest Pace" value={bests.fastestPace.label} />}
@@ -38,7 +38,7 @@ export function Cardio() {
         Log Session
       </LinkButton>
 
-      <div className="bg-paper-100 border border-paper-400 rounded-[2px] px-4 sm:px-6 divide-y divide-paper-300">
+      <div className="bg-paper-100 border border-paper-400 rounded-lg px-4 sm:px-6 divide-y divide-paper-300">
         {sessions.length === 0 ? (
           <p className="text-sm text-ink-500 py-8 text-center">No cardio sessions yet.</p>
         ) : (
