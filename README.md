@@ -11,6 +11,7 @@ A local-first PWA for tracking workouts, food, cardio, and body weight — built
 - **Cardio** — session log with presets that scale by a multiplier ("Evening Cycling" × 1.5)
 - **Body Weight** — daily log with trend chart and rolling average
 - **Home** — GitHub-style consistency heatmap + 14-day trend charts across all four
+- **Dark mode** — light, dark, or system, set in Settings
 
 ![Home dashboard heatmap and trend cards](screenshots/home.png)
 
