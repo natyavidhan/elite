@@ -11,6 +11,7 @@ A local-first PWA for tracking workouts, food, cardio, and body weight — built
 - **Cardio** — session log with presets that scale by a multiplier ("Evening Cycling" × 1.5)
 - **Body Weight** — daily log with trend chart and rolling average
 - **Home** — GitHub-style consistency heatmap + 14-day trend charts across all four
+- **AI Coach** — ask it about your training in plain language; it calls tools against your real logs (workouts, food, cardio, weight) rather than guessing. Backend-only — see below
 - **Dark mode** — light, dark, or system, set in Settings
 
 ![Home dashboard heatmap and trend cards](screenshots/home.png)
@@ -19,7 +20,7 @@ No account, no backend required — everything lives in IndexedDB on your device
 
 ## Stack
 
-React + Vite + TypeScript, Dexie (IndexedDB), Tailwind, Recharts, `vite-plugin-pwa`. Optional sync server: Express + SQLite (`better-sqlite3`).
+React + Vite + TypeScript, Dexie (IndexedDB), Tailwind, Recharts, `vite-plugin-pwa`. Optional sync server: Express + SQLite (`better-sqlite3`). Optional AI Coach: Groq, tool-calling only (no RAG/vector store).
 
 ## Run it
 
@@ -43,3 +44,13 @@ Open `http://localhost:8080` — sync is already on, pointed at itself, nothing 
 Want a shared-secret token so randoms on your network can't write to it? Set `SYNC_TOKEN` on the server *and* rebuild the image with `--build-arg VITE_SYNC_TOKEN=<same value>` — it's baked into the frontend bundle at build time, not read at container start.
 
 Running the frontend and server separately instead (e.g. the app on Vercel, the server on a home box)? Set `VITE_API_URL` to the server's full URL rather than `same-origin`, and run the server on its own with `cd server && npm install && npm start`.
+
+### AI Coach
+
+Optional, and only shows up in the app once it's configured. It's entirely server-side — the frontend never talks to Groq directly, and there's no client-side key to steal. Get a free key at [console.groq.com/keys](https://console.groq.com/keys) and pass it as `GROQ_API_KEY`:
+
+```bash
+docker run -d -p 8080:8080 -v elite-data:/data -e GROQ_API_KEY=gsk_... --name elite elite
+```
+
+Unlike `SYNC_TOKEN`, this is read at container start — no rebuild needed to add, change, or remove it. The coach answers by calling tools against your synced data (recent workouts, exercise trends, PRs, muscle volume, food/macros, cardio, body weight) — it doesn't see anything that hasn't synced to the server yet.
