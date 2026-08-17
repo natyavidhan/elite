@@ -20,6 +20,9 @@ import { SettingsPage } from '@/pages/Settings';
 
 // Recharts pulls in a meaningful chunk of its own — split it off the main bundle.
 const BodyWeight = lazy(() => import('@/pages/BodyWeight').then((m) => ({ default: m.BodyWeight })));
+// react-markdown + remark-gfm are only needed once the (backend-only, often
+// unused) AI Coach tab is actually opened.
+const Coach = lazy(() => import('@/pages/Coach').then((m) => ({ default: m.Coach })));
 
 export default function App() {
   return (
@@ -44,6 +47,7 @@ export default function App() {
               <Route path="/cardio/log" element={<CardioLogRun />} />
             <Route path="/cardio/presets" element={<CardioPresets />} />
               <Route path="/bodyweight" element={<BodyWeight />} />
+              <Route path="/coach" element={<Coach />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Routes>
           </Suspense>

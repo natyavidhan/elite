@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { initSync } from './db/sync';
+import { checkCoachAvailability } from './db/coach';
 import './index.css';
 
 initSync();
+void checkCoachAvailability();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

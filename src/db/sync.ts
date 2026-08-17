@@ -1,21 +1,14 @@
 import type { Table } from 'dexie';
 import { db, SYNCED_TABLES, KEY_SYNCED_TABLES, type SyncedTable, type Tombstone } from './schema';
+import { API_BASE, isBackendConfigured, authHeaders } from '@/utils/apiBase';
 
 type AnyTable = Table<Record<string, unknown>, unknown>;
 
 const LAST_SYNCED_KEY = 'elite:lastSyncedAt';
 
-const RAW_API_URL = import.meta.env.VITE_API_URL as string | undefined;
-const SYNC_TOKEN = import.meta.env.VITE_SYNC_TOKEN as string | undefined;
-
 /** Sync is entirely opt-in: without a configured server this app is exactly
- * what it always was — local-only, no network calls, nothing to configure.
- * The special value "same-origin" (what the Dockerfile bakes in by default)
- * targets a relative /api/sync instead of an absolute origin — the bundled
- * deploy serves the frontend and the API from the same process and port,
- * so there's no server URL to configure at all. */
-export const isSyncEnabled = Boolean(RAW_API_URL);
-const API_URL = RAW_API_URL === 'same-origin' ? '' : RAW_API_URL?.replace(/\/$/, '');
+ * what it always was — local-only, no network calls, nothing to configure. */
+export const isSyncEnabled = isBackendConfigured;
 
 function getLastSyncedAt(): number {
   return Number(localStorage.getItem(LAST_SYNCED_KEY) ?? 0);
@@ -118,12 +111,9 @@ export async function runSync(): Promise<void> {
   try {
     const since = getLastSyncedAt();
     const { changes, tombstones } = await collectLocalChanges(since);
-    const res = await fetch(`${API_URL}/api/sync`, {
+    const res = await fetch(`${API_BASE}/api/sync`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(SYNC_TOKEN ? { Authorization: `Bearer ${SYNC_TOKEN}` } : {}),
-      },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ since, changes, tombstones }),
     });
     if (!res.ok) throw new Error(`Sync request failed: ${res.status}`);

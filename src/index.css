@@ -120,4 +120,54 @@
   .hairline {
     @apply border-paper-400;
   }
+
+  /* AI Coach replies come back as markdown (the model reaches for tables and
+     headings on its own for anything comparative) — style it as an extension
+     of the plate/record language rather than default browser markdown. */
+  .coach-markdown > :first-child {
+    margin-top: 0;
+  }
+  .coach-markdown > :last-child {
+    margin-bottom: 0;
+  }
+  .coach-markdown p {
+    @apply mb-2.5 leading-relaxed;
+  }
+  .coach-markdown strong {
+    @apply text-ink-900 font-semibold;
+  }
+  .coach-markdown h1,
+  .coach-markdown h2,
+  .coach-markdown h3 {
+    @apply plate-caption text-xs mt-3 mb-1.5;
+  }
+  .coach-markdown ul,
+  .coach-markdown ol {
+    @apply mb-2.5 pl-4 space-y-1;
+  }
+  .coach-markdown ul {
+    @apply list-disc;
+  }
+  .coach-markdown ol {
+    @apply list-decimal;
+  }
+  .coach-markdown a {
+    @apply text-gold-700 hover:text-gold-600;
+  }
+  .coach-markdown code {
+    @apply font-data text-xs bg-paper-300 px-1 py-0.5 rounded;
+  }
+  .coach-markdown table {
+    @apply w-full text-xs font-data my-2.5 border-collapse;
+  }
+  .coach-markdown th,
+  .coach-markdown td {
+    @apply border border-paper-400 px-2 py-1.5 text-left;
+  }
+  .coach-markdown th {
+    @apply plate-caption text-[10px];
+  }
+  .coach-markdown table {
+    @apply block overflow-x-auto;
+  }
 }

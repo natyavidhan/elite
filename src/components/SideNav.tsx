@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Dumbbell, UtensilsCrossed, Activity, Scale, Settings } from 'lucide-react';
+import { Home, Dumbbell, UtensilsCrossed, Activity, Scale, Sparkles, Settings } from 'lucide-react';
+import { useCoachAvailability } from '@/hooks/useCoachAvailability';
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { to: '/', label: 'Home', icon: Home, end: true },
   { to: '/workout', label: 'Workout', icon: Dumbbell },
   { to: '/food', label: 'Food', icon: UtensilsCrossed },
@@ -10,6 +11,9 @@ const NAV_ITEMS = [
 ];
 
 export function SideNav() {
+  const coachAvailable = useCoachAvailability() === 'available';
+  const NAV_ITEMS = coachAvailable ? [...BASE_NAV_ITEMS, { to: '/coach', label: 'AI Coach', icon: Sparkles }] : BASE_NAV_ITEMS;
+
   return (
     <nav aria-label="Primary" className="hidden md:flex md:flex-col md:w-56 md:shrink-0 md:border-r hairline md:py-8 md:px-4">
       <div className="px-2 mb-8">
