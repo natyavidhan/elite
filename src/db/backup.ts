@@ -1,4 +1,5 @@
 import { db } from './schema';
+import { scheduleSync } from './sync';
 
 interface BackupPayload {
   version: 1;
@@ -71,4 +72,5 @@ export async function importBackup(file: File): Promise<void> {
       await db.settings.bulkAdd(payload.tables.settings as never[]);
     },
   );
+  scheduleSync();
 }

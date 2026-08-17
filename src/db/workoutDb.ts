@@ -1,5 +1,7 @@
 import { db, today, type WorkoutSession, type WorkoutSet, type WorkoutPreset, type WorkoutPresetExercise } from './schema';
 import { findExerciseById } from '@/constants/exercises';
+import { recordTombstone } from './tombstones';
+import { scheduleSync } from './sync';
 
 export async function getSessionByDate(date: string): Promise<WorkoutSession | undefined> {
   return db.workoutSessions.where('date').equals(date).first();
@@ -21,6 +23,7 @@ export async function getOrCreateSession(date: string = today()): Promise<Workou
     const createdAt = new Date().toISOString();
     try {
       const id = await db.workoutSessions.add({ date, createdAt });
+      scheduleSync();
       return { id, date, createdAt };
     } catch {
       const winner = await getSessionByDate(date);
@@ -77,6 +80,7 @@ export async function addSet(input: AddSetInput): Promise<AddSetResult> {
     rpe: input.rpe,
     createdAt,
   });
+  scheduleSync();
   return {
     set: { id, setNumber, createdAt, ...input },
     isPR: input.weightKg > priorBest && priorBest > 0,
@@ -85,17 +89,28 @@ export async function addSet(input: AddSetInput): Promise<AddSetResult> {
 
 export async function updateSet(id: number, changes: Partial<Pick<WorkoutSet, 'reps' | 'weightKg' | 'rpe'>>) {
   await db.workoutSets.update(id, changes);
+  scheduleSync();
 }
 
 export async function deleteSet(id: number) {
-  await db.workoutSets.delete(id);
+  const row = await db.workoutSets.get(id);
+  await db.transaction('rw', db.workoutSets, db.tombstones, async () => {
+    await db.workoutSets.delete(id);
+    await recordTombstone('workoutSets', row?.uuid);
+  });
+  scheduleSync();
 }
 
 export async function deleteSession(id: number) {
-  await db.transaction('rw', db.workoutSessions, db.workoutSets, async () => {
+  await db.transaction('rw', db.workoutSessions, db.workoutSets, db.tombstones, async () => {
+    const session = await db.workoutSessions.get(id);
+    const sets = await db.workoutSets.where('sessionId').equals(id).toArray();
     await db.workoutSets.where('sessionId').equals(id).delete();
     await db.workoutSessions.delete(id);
+    await recordTombstone('workoutSessions', session?.uuid);
+    for (const s of sets) await recordTombstone('workoutSets', s.uuid);
   });
+  scheduleSync();
 }
 
 /** Volume for a muscle counts full credit from primary movers, half credit
@@ -245,15 +260,23 @@ export async function getWorkoutPresets(): Promise<WorkoutPreset[]> {
 }
 
 export async function createWorkoutPreset(name: string, exercises: WorkoutPresetExercise[]): Promise<number> {
-  return db.workoutPresets.add({ name, exercises, createdAt: new Date().toISOString() });
+  const id = await db.workoutPresets.add({ name, exercises, createdAt: new Date().toISOString() });
+  scheduleSync();
+  return id;
 }
 
 export async function updateWorkoutPreset(id: number, name: string, exercises: WorkoutPresetExercise[]): Promise<void> {
   await db.workoutPresets.update(id, { name, exercises });
+  scheduleSync();
 }
 
 export async function deleteWorkoutPreset(id: number): Promise<void> {
-  await db.workoutPresets.delete(id);
+  const row = await db.workoutPresets.get(id);
+  await db.transaction('rw', db.workoutPresets, db.tombstones, async () => {
+    await db.workoutPresets.delete(id);
+    await recordTombstone('workoutPresets', row?.uuid);
+  });
+  scheduleSync();
 }
 
 export interface ApplyPresetResult {
@@ -284,6 +307,7 @@ export async function applyWorkoutPreset(sessionId: number, preset: WorkoutPrese
 
 export async function addCustomExercise(exercise: { id: string; name: string; primaryMuscles: string[]; secondaryMuscles: string[]; category: string }) {
   await db.customExercises.put(exercise as never);
+  scheduleSync();
 }
 
 export async function getCustomExercises() {

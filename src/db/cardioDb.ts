@@ -1,16 +1,26 @@
 import { db, type CardioSession, type CardioPreset } from './schema';
 import { startOfWeek, isWithinInterval } from 'date-fns';
+import { recordTombstone } from './tombstones';
+import { scheduleSync } from './sync';
 
 export async function addCardioSession(input: Omit<CardioSession, 'id' | 'createdAt'>): Promise<number> {
-  return db.cardioSessions.add({ ...input, createdAt: new Date().toISOString() });
+  const id = await db.cardioSessions.add({ ...input, createdAt: new Date().toISOString() });
+  scheduleSync();
+  return id;
 }
 
 export async function updateCardioSession(id: number, changes: Partial<CardioSession>) {
   await db.cardioSessions.update(id, changes);
+  scheduleSync();
 }
 
 export async function deleteCardioSession(id: number) {
-  await db.cardioSessions.delete(id);
+  const row = await db.cardioSessions.get(id);
+  await db.transaction('rw', db.cardioSessions, db.tombstones, async () => {
+    await db.cardioSessions.delete(id);
+    await recordTombstone('cardioSessions', row?.uuid);
+  });
+  scheduleSync();
 }
 
 export async function getRecentCardioSessions(limit = 20): Promise<CardioSession[]> {
@@ -53,15 +63,23 @@ export async function getCardioPresets(): Promise<CardioPreset[]> {
 export type CardioPresetInput = Omit<CardioPreset, 'id' | 'createdAt'>;
 
 export async function createCardioPreset(input: CardioPresetInput): Promise<number> {
-  return db.cardioPresets.add({ ...input, createdAt: new Date().toISOString() });
+  const id = await db.cardioPresets.add({ ...input, createdAt: new Date().toISOString() });
+  scheduleSync();
+  return id;
 }
 
 export async function updateCardioPreset(id: number, input: CardioPresetInput): Promise<void> {
   await db.cardioPresets.update(id, input);
+  scheduleSync();
 }
 
 export async function deleteCardioPreset(id: number): Promise<void> {
-  await db.cardioPresets.delete(id);
+  const row = await db.cardioPresets.get(id);
+  await db.transaction('rw', db.cardioPresets, db.tombstones, async () => {
+    await db.cardioPresets.delete(id);
+    await recordTombstone('cardioPresets', row?.uuid);
+  });
+  scheduleSync();
 }
 
 export interface CardioPersonalBests {

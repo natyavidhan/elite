@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { Download, Upload } from 'lucide-react';
+import { Download, Upload, RefreshCw } from 'lucide-react';
 import { Field } from '@/components/ui/Field';
 import { Button } from '@/components/ui/Button';
 import { getSettings, updateSettings, DEFAULT_SETTINGS, type AppSettings } from '@/db/settingsDb';
 import { exportBackup, importBackup } from '@/db/backup';
 import { useTheme } from '@/hooks/useTheme';
+import { isSyncEnabled, runSync, subscribeSyncStatus, type SyncStatus } from '@/db/sync';
 import type { ThemePreference } from '@/utils/theme';
+
+const SYNC_STATUS_LABEL: Record<SyncStatus, string> = {
+  disabled: 'Not configured',
+  idle: 'Synced',
+  syncing: 'Syncing…',
+  offline: 'Offline — will sync when back online',
+  error: 'Sync error — will retry',
+};
 
 const THEME_OPTIONS: { key: ThemePreference; label: string }[] = [
   { key: 'light', label: 'Light' },
@@ -19,10 +28,13 @@ export function SettingsPage() {
   const [saved, setSaved] = useState(false);
   const [importMessage, setImportMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('disabled');
 
   useEffect(() => {
     getSettings().then(setSettings);
   }, []);
+
+  useEffect(() => subscribeSyncStatus(setSyncStatus), []);
 
   async function save(changes: Partial<AppSettings>) {
     const next = { ...settings, ...changes };
@@ -100,10 +112,42 @@ export function SettingsPage() {
         </div>
       </section>
 
+      {isSyncEnabled && (
+        <section className="space-y-3">
+          <h2 className="plate-caption text-xs text-ink-500">Sync</h2>
+          <div className="flex items-center justify-between rounded-lg border border-paper-400 bg-paper-100 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  syncStatus === 'idle'
+                    ? 'bg-gold-600'
+                    : syncStatus === 'syncing'
+                      ? 'bg-gold-400 animate-pulse'
+                      : syncStatus === 'error'
+                        ? 'bg-gold-700'
+                        : 'bg-ink-300'
+                }`}
+              />
+              <span className="text-sm text-ink-900">{SYNC_STATUS_LABEL[syncStatus]}</span>
+            </div>
+            <button
+              onClick={() => runSync()}
+              disabled={syncStatus === 'syncing'}
+              aria-label="Sync now"
+              className="text-ink-500 hover:text-gold-600 disabled:text-ink-300 p-1.5"
+            >
+              <RefreshCw size={15} className={syncStatus === 'syncing' ? 'animate-spin' : ''} />
+            </button>
+          </div>
+        </section>
+      )}
+
       <section className="space-y-3">
         <h2 className="plate-caption text-xs text-ink-500">Backup</h2>
         <p className="text-sm text-ink-700">
-          Elite keeps everything on this device only. Export a backup before clearing browser data or switching devices, and import it to restore.
+          {isSyncEnabled
+            ? 'Everything also lives on your sync server, but a local export is still the fastest way to move a full copy between devices.'
+            : 'Elite keeps everything on this device only. Export a backup before clearing browser data or switching devices, and import it to restore.'}
         </p>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => exportBackup()} className="flex-1">

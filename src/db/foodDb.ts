@@ -1,4 +1,6 @@
 import { db, today, type FoodItem, type FoodLog, type MealType } from './schema';
+import { recordTombstone } from './tombstones';
+import { scheduleSync } from './sync';
 
 export async function searchLocalFoodItems(query: string): Promise<FoodItem[]> {
   const q = query.trim().toLowerCase();
@@ -15,12 +17,16 @@ export async function upsertFoodItem(item: FoodItem): Promise<number> {
   // which has no externalId to key off) — inserting it again would collide
   // with its own primary key instead of just reusing it.
   if (item.id) return item.id;
-  if (!item.externalId) return db.foodItems.add(item);
+  if (!item.externalId) {
+    const id = await db.foodItems.add(item);
+    scheduleSync();
+    return id;
+  }
 
   const externalId = item.externalId;
   // Check-then-write runs in one transaction so two concurrent callers
   // serialize instead of both reading "no row yet" and both inserting.
-  return db.transaction('rw', db.foodItems, async () => {
+  const id = await db.transaction('rw', db.foodItems, async () => {
     const existing = await getFoodItemByExternalId(externalId);
     if (existing?.id) {
       await db.foodItems.update(existing.id, item);
@@ -35,6 +41,8 @@ export async function upsertFoodItem(item: FoodItem): Promise<number> {
       throw new Error(`Failed to create or find food item ${externalId}`);
     }
   });
+  scheduleSync();
+  return id;
 }
 
 export async function getFoodItem(id: number): Promise<FoodItem | undefined> {
@@ -49,11 +57,18 @@ export interface LogFoodInput {
 }
 
 export async function logFood(input: LogFoodInput): Promise<number> {
-  return db.foodLogs.add({ ...input, createdAt: new Date().toISOString() });
+  const id = await db.foodLogs.add({ ...input, createdAt: new Date().toISOString() });
+  scheduleSync();
+  return id;
 }
 
 export async function deleteFoodLog(id: number): Promise<void> {
-  await db.foodLogs.delete(id);
+  const row = await db.foodLogs.get(id);
+  await db.transaction('rw', db.foodLogs, db.tombstones, async () => {
+    await db.foodLogs.delete(id);
+    await recordTombstone('foodLogs', row?.uuid);
+  });
+  scheduleSync();
 }
 
 export interface FoodLogEntry {
@@ -129,15 +144,23 @@ function dishToPer100g(input: DishInput): Omit<FoodItem, 'id'> {
 }
 
 export async function createCustomDish(input: DishInput): Promise<number> {
-  return db.foodItems.add(dishToPer100g(input));
+  const id = await db.foodItems.add(dishToPer100g(input));
+  scheduleSync();
+  return id;
 }
 
 export async function updateCustomDish(id: number, input: DishInput): Promise<void> {
   await db.foodItems.update(id, dishToPer100g(input));
+  scheduleSync();
 }
 
 export async function deleteCustomDish(id: number): Promise<void> {
-  await db.foodItems.delete(id);
+  const row = await db.foodItems.get(id);
+  await db.transaction('rw', db.foodItems, db.tombstones, async () => {
+    await db.foodItems.delete(id);
+    await recordTombstone('foodItems', row?.uuid);
+  });
+  scheduleSync();
 }
 
 export async function getCustomDishes(): Promise<FoodItem[]> {

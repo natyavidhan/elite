@@ -1,4 +1,5 @@
 import { db } from './schema';
+import { scheduleSync } from './sync';
 
 export interface AppSettings {
   unitSystem: 'metric' | 'imperial';
@@ -37,4 +38,5 @@ export async function updateSettings(changes: Partial<AppSettings>): Promise<voi
       await db.settings.put({ key, value: String(value) });
     }
   });
+  scheduleSync();
 }

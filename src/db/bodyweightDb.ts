@@ -1,5 +1,7 @@
 import { db, today, type BodyWeightLog } from './schema';
 import { subDays, isAfter } from 'date-fns';
+import { recordTombstone } from './tombstones';
+import { scheduleSync } from './sync';
 
 export async function upsertBodyWeight(input: { date?: string; weightKg: number; bodyFatPct?: number; notes?: string }): Promise<void> {
   const date = input.date ?? today();
@@ -19,10 +21,16 @@ export async function upsertBodyWeight(input: { date?: string; weightKg: number;
       if (winner?.id) await db.bodyWeightLogs.update(winner.id, { weightKg: input.weightKg, bodyFatPct: input.bodyFatPct, notes: input.notes });
     }
   });
+  scheduleSync();
 }
 
 export async function deleteBodyWeightLog(id: number) {
-  await db.bodyWeightLogs.delete(id);
+  const row = await db.bodyWeightLogs.get(id);
+  await db.transaction('rw', db.bodyWeightLogs, db.tombstones, async () => {
+    await db.bodyWeightLogs.delete(id);
+    await recordTombstone('bodyWeightLogs', row?.uuid);
+  });
+  scheduleSync();
 }
 
 export async function getTodayBodyWeight(): Promise<BodyWeightLog | undefined> {
