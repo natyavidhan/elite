@@ -25,9 +25,10 @@ export async function getOrCreateSession(date: string = today()): Promise<Workou
       const id = await db.workoutSessions.add({ date, createdAt });
       scheduleSync();
       return { id, date, createdAt };
-    } catch {
+    } catch (e) {
       const winner = await getSessionByDate(date);
       if (winner) return winner;
+      console.error(`getOrCreateSession(${date}) insert failed and no row was found on retry:`, e);
       throw new Error(`Failed to create or find a workout session for ${date}`);
     }
   });

@@ -34,10 +34,11 @@ export async function upsertFoodItem(item: FoodItem): Promise<number> {
     }
     try {
       return await db.foodItems.add(item);
-    } catch {
+    } catch (e) {
       // `externalId` is uniquely indexed — a concurrent writer outside this transaction may have just inserted it first.
       const winner = await getFoodItemByExternalId(externalId);
       if (winner?.id) return winner.id;
+      console.error(`upsertFoodItem(${externalId}) insert failed and no row was found on retry:`, e);
       throw new Error(`Failed to create or find food item ${externalId}`);
     }
   });

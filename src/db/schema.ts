@@ -1,4 +1,5 @@
 import Dexie, { type Table } from 'dexie';
+import { generateUuid } from '@/utils/uuid';
 
 // Every synced table carries `uuid` (the sync identity — stable across
 // devices, unlike the local autoincrement `id`) and `updatedAt` (epoch ms,
@@ -215,7 +216,7 @@ class EliteDB extends Dexie {
             .table(name)
             .toCollection()
             .modify((row: { uuid?: string; updatedAt?: number }) => {
-              if (!row.uuid) row.uuid = crypto.randomUUID();
+              if (!row.uuid) row.uuid = generateUuid();
               if (!row.updatedAt) row.updatedAt = now;
             });
         }
@@ -243,7 +244,7 @@ function stampUpdatedAt(mods: any): { updatedAt: number } | undefined {
 for (const name of UUID_SYNCED_TABLES) {
   const table = db.table(name);
   table.hook('creating', (_pk: unknown, obj: any) => {
-    if (!obj.uuid) obj.uuid = crypto.randomUUID();
+    if (!obj.uuid) obj.uuid = generateUuid();
     // A row arriving from sync already carries its true updatedAt — only
     // locally-originated creates (which never set this field) get stamped.
     if (obj.updatedAt == null) obj.updatedAt = Date.now();

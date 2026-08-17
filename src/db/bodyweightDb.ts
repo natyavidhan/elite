@@ -15,10 +15,11 @@ export async function upsertBodyWeight(input: { date?: string; weightKg: number;
     }
     try {
       await db.bodyWeightLogs.add({ date, weightKg: input.weightKg, bodyFatPct: input.bodyFatPct, notes: input.notes, createdAt: new Date().toISOString() });
-    } catch {
+    } catch (e) {
       // `date` is uniquely indexed — a concurrent writer outside this transaction may have just inserted it first.
       const winner = await db.bodyWeightLogs.where('date').equals(date).first();
       if (winner?.id) await db.bodyWeightLogs.update(winner.id, { weightKg: input.weightKg, bodyFatPct: input.bodyFatPct, notes: input.notes });
+      else console.error(`upsertBodyWeight(${date}) insert failed and no row was found on retry:`, e);
     }
   });
   scheduleSync();
