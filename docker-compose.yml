@@ -1,0 +1,17 @@
+services:
+  elite:
+    build: .
+    ports:
+      - '8080:8080'
+    volumes:
+      - elite-data:/data
+    environment:
+      # Optional shared-secret token. If set, requires a matching
+      # VITE_SYNC_TOKEN build arg baked into the image (see README) —
+      # tokens are inlined into the frontend bundle at build time, not
+      # read at container start.
+      - SYNC_TOKEN=
+    restart: unless-stopped
+
+volumes:
+  elite-data:

@@ -6,12 +6,16 @@ type AnyTable = Table<Record<string, unknown>, unknown>;
 const LAST_SYNCED_KEY = 'elite:lastSyncedAt';
 
 const RAW_API_URL = import.meta.env.VITE_API_URL as string | undefined;
-const API_URL = RAW_API_URL?.replace(/\/$/, '');
 const SYNC_TOKEN = import.meta.env.VITE_SYNC_TOKEN as string | undefined;
 
 /** Sync is entirely opt-in: without a configured server this app is exactly
- * what it always was — local-only, no network calls, nothing to configure. */
-export const isSyncEnabled = Boolean(API_URL);
+ * what it always was — local-only, no network calls, nothing to configure.
+ * The special value "same-origin" (what the Dockerfile bakes in by default)
+ * targets a relative /api/sync instead of an absolute origin — the bundled
+ * deploy serves the frontend and the API from the same process and port,
+ * so there's no server URL to configure at all. */
+export const isSyncEnabled = Boolean(RAW_API_URL);
+const API_URL = RAW_API_URL === 'same-origin' ? '' : RAW_API_URL?.replace(/\/$/, '');
 
 function getLastSyncedAt(): number {
   return Number(localStorage.getItem(LAST_SYNCED_KEY) ?? 0);

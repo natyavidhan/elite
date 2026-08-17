@@ -1,0 +1,15 @@
+node_modules
+server/node_modules
+dist
+server/data
+server/public
+.git
+.env
+.env.local
+screenshots
+.impeccable
+.claude
+.codex
+.agents
+.expo
+*.md
