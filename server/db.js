@@ -31,3 +31,12 @@ db.exec(`
   );
   CREATE INDEX IF NOT EXISTS idx_tombstones_deleted_at ON tombstones (deleted_at);
 `);
+
+const selectTableRows = db.prepare(`SELECT data FROM records WHERE table_name = ?`);
+
+/** Every synced Dexie table's current (non-deleted) rows, parsed from the
+ * generic JSON blob store — the same rows the client would see, since a
+ * delete already removes its row from `records` at sync time. */
+export function getTableRows(tableName) {
+  return selectTableRows.all(tableName).map((row) => JSON.parse(row.data));
+}
