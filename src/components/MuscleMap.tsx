@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { format, parseISO } from 'date-fns';
 import { X } from 'lucide-react';
 import { MuscleMapFront } from './MuscleMapFront';
 import { MuscleMapBack } from './MuscleMapBack';
@@ -34,6 +35,9 @@ export function MuscleMap({ volumes, date = today() }: MuscleMapProps) {
     setActiveMuscle((prev) => (prev === muscleId ? null : muscleId));
   }
 
+  const isToday = date === today();
+  const dayLabel = isToday ? 'Today' : format(parseISO(date), 'MMM d');
+
   const ranked = Object.entries(volumes)
     .filter(([, v]) => v > 0)
     .sort(([, a], [, b]) => b - a);
@@ -43,7 +47,7 @@ export function MuscleMap({ volumes, date = today() }: MuscleMapProps) {
   return (
     <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg">
       <div className="flex items-center justify-between px-4 pt-4 sm:px-6 sm:pt-5">
-        <h2 className="plate-caption text-xs sm:text-sm">Plate — Today&apos;s Training</h2>
+        <h2 className="plate-caption text-xs sm:text-sm">Plate — {isToday ? "Today's Training" : `${dayLabel} Training`}</h2>
         <div className="flex gap-1 text-xs">
           <button
             onClick={() => setSide('front')}
@@ -112,13 +116,13 @@ export function MuscleMap({ volumes, date = today() }: MuscleMapProps) {
           {activeMuscle && (
             <div className="border-t hairline px-4 py-4 sm:px-6">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="plate-caption text-xs">{muscleDisplayName(activeMuscle)} — Today</h3>
+                <h3 className="plate-caption text-xs">{muscleDisplayName(activeMuscle)} — {dayLabel}</h3>
                 <button onClick={() => setActiveMuscle(null)} aria-label="Close" className="text-ink-500 hover:text-gold-600">
                   <X size={16} />
                 </button>
               </div>
               {breakdown.length === 0 ? (
-                <p className="text-sm text-ink-500">Nothing logged for this muscle yet today.</p>
+                <p className="text-sm text-ink-500">Nothing logged for this muscle {isToday ? 'yet today' : 'on this day'}.</p>
               ) : (
                 <ul className="space-y-2">
                   {breakdown.map((b) => (

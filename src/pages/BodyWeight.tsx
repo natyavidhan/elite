@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { format, parseISO } from 'date-fns';
-import { Trash2, Pencil } from 'lucide-react';
+import { Trash2, Pencil, Plus } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { WeightEntry } from '@/components/WeightEntry';
 import {
   getTodayBodyWeight,
+  getBodyWeightLogByDate,
   getBodyWeightLogsInRange,
   getBodyWeightStats,
   deleteBodyWeightLog,
@@ -15,6 +16,7 @@ import { getSettings } from '@/db/settingsDb';
 import { formatWeight, kgToLbs } from '@/utils/unitConversion';
 import { useTheme } from '@/hooks/useTheme';
 import { THEME_COLORS } from '@/utils/theme';
+import { today as todayStr } from '@/db/schema';
 import type { BodyWeightLog } from '@/db/schema';
 
 const RANGES: { key: WeightRange; label: string }[] = [
@@ -31,6 +33,9 @@ export function BodyWeight() {
   const [stats, setStats] = useState<BodyWeightStats>({});
   const [unit, setUnit] = useState<'kg' | 'lbs'>('kg');
   const [editing, setEditing] = useState(false);
+  const [pastEntryOpen, setPastEntryOpen] = useState(false);
+  const [pastDate, setPastDate] = useState('');
+  const [pastExisting, setPastExisting] = useState<BodyWeightLog | undefined>();
 
   async function refresh() {
     setLogs(await getBodyWeightLogsInRange(range));
@@ -47,6 +52,17 @@ export function BodyWeight() {
   async function handleDelete(id: number) {
     await deleteBodyWeightLog(id);
     refresh();
+  }
+
+  async function openPastEntry(date: string) {
+    setPastDate(date);
+    setPastExisting(date ? await getBodyWeightLogByDate(date) : undefined);
+  }
+
+  function closePastEntry() {
+    setPastEntryOpen(false);
+    setPastDate('');
+    setPastExisting(undefined);
   }
 
   const chartData = logs.map((l) => ({
@@ -115,7 +131,7 @@ export function BodyWeight() {
       </div>
 
       {editing || !today ? (
-        <WeightEntry existing={today} unit={unit} onSaved={() => { setEditing(false); refresh(); }} />
+        <WeightEntry date={todayStr()} existing={today} unit={unit} onSaved={() => { setEditing(false); refresh(); }} />
       ) : (
         <div className="bg-paper-100 border border-paper-400 rounded-lg px-4 py-3 sm:px-6 flex items-center justify-between">
           <div>
@@ -126,6 +142,42 @@ export function BodyWeight() {
             <Pencil size={16} />
           </button>
         </div>
+      )}
+
+      {pastEntryOpen ? (
+        <div className="bg-paper-100 border border-paper-400 rounded-lg p-4 sm:p-6 space-y-3">
+          <div className="flex items-center justify-between">
+            <label className="block flex-1">
+              <span className="plate-caption text-[10px] block mb-1">Date</span>
+              <input
+                type="date"
+                value={pastDate}
+                max={todayStr()}
+                onChange={(e) => openPastEntry(e.target.value)}
+                className="font-data bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-1 text-sm focus:outline-none"
+              />
+            </label>
+            <button onClick={closePastEntry} className="text-xs text-ink-500 hover:text-gold-600 underline underline-offset-4">
+              Cancel
+            </button>
+          </div>
+          {pastDate && (
+            <WeightEntry
+              key={pastDate}
+              date={pastDate}
+              existing={pastExisting}
+              unit={unit}
+              onSaved={() => { closePastEntry(); refresh(); }}
+            />
+          )}
+        </div>
+      ) : (
+        <button
+          onClick={() => setPastEntryOpen(true)}
+          className="flex items-center gap-1.5 text-xs text-ink-500 hover:text-gold-600"
+        >
+          <Plus size={14} /> Log a past day
+        </button>
       )}
 
       <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg divide-y divide-paper-400">

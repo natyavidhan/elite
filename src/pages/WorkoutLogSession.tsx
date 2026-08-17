@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { format, parseISO } from 'date-fns';
 import { Search, Check, Zap } from 'lucide-react';
 import { ExerciseCard } from '@/components/ExerciseCard';
 import { MuscleMap } from '@/components/MuscleMap';
@@ -8,7 +8,7 @@ import { ConfettiBanner } from '@/components/ConfettiBanner';
 import { Button } from '@/components/ui/Button';
 import { EXERCISES, type Exercise } from '@/constants/exercises';
 import { MUSCLE_IDS, muscleDisplayName } from '@/constants/muscles';
-import { today, type WorkoutSet, type ExerciseCategory, type WorkoutPreset } from '@/db/schema';
+import { today, isValidDateParam, type WorkoutSet, type ExerciseCategory, type WorkoutPreset } from '@/db/schema';
 import {
   getOrCreateSession,
   getSetsForSession,
@@ -24,7 +24,14 @@ import {
 
 export function WorkoutLogSession() {
   const navigate = useNavigate();
-  const date = today();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const dateParam = searchParams.get('date');
+  const date = isValidDateParam(dateParam) ? dateParam : today();
+
+  function handleDateChange(newDate: string) {
+    setSearchParams(newDate === today() ? {} : { date: newDate }, { replace: true });
+  }
+
   const [customExercises, setCustomExercises] = useState<Exercise[]>([]);
   const [exerciseOrder, setExerciseOrder] = useState<string[]>([]);
   const [setsByExercise, setSetsByExercise] = useState<Record<string, WorkoutSet[]>>({});
@@ -46,17 +53,20 @@ export function WorkoutLogSession() {
   // is cleared so the NEXT call retries fresh — caching a rejected promise
   // here would make one transient failure permanent for the rest of the
   // page's life, since every future call would just replay the same error.
-  const sessionPromiseRef = useRef<Promise<number> | null>(null);
+  // Keyed by date, not just cached bare — switching the date picker must
+  // not keep handing out a session id for whatever date was open before.
+  const sessionPromiseRef = useRef<{ date: string; promise: Promise<number> } | null>(null);
   function ensureSessionId(): Promise<number> {
-    if (!sessionPromiseRef.current) {
-      sessionPromiseRef.current = getOrCreateSession(date)
+    if (sessionPromiseRef.current?.date !== date) {
+      const promise = getOrCreateSession(date)
         .then((session) => session.id!)
         .catch((e) => {
-          sessionPromiseRef.current = null;
+          if (sessionPromiseRef.current?.date === date) sessionPromiseRef.current = null;
           throw e;
         });
+      sessionPromiseRef.current = { date, promise };
     }
-    return sessionPromiseRef.current;
+    return sessionPromiseRef.current.promise;
   }
 
   useEffect(() => {
@@ -172,9 +182,21 @@ export function WorkoutLogSession() {
     <div className="space-y-5 pb-24">
       <ConfettiBanner message="New Personal Record" trigger={confettiTrigger} />
 
-      <div>
-        <p className="plate-caption text-xs text-ink-500">{format(new Date(), 'EEEE, MMMM d')}</p>
-        <h1 className="font-display text-2xl sm:text-3xl text-ink-900 mt-1">Log Session</h1>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="plate-caption text-xs text-ink-500">{format(parseISO(date), 'EEEE, MMMM d')}</p>
+          <h1 className="font-display text-2xl sm:text-3xl text-ink-900 mt-1">Log Session</h1>
+        </div>
+        <label className="block text-right shrink-0">
+          <span className="plate-caption text-[10px] block mb-1 text-ink-500">Date</span>
+          <input
+            type="date"
+            value={date}
+            max={today()}
+            onChange={(e) => handleDateChange(e.target.value)}
+            className="font-data bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-1 text-sm text-right focus:outline-none"
+          />
+        </label>
       </div>
 
       {error && (

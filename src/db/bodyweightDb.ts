@@ -37,6 +37,10 @@ export async function getTodayBodyWeight(): Promise<BodyWeightLog | undefined> {
   return db.bodyWeightLogs.where('date').equals(today()).first();
 }
 
+export async function getBodyWeightLogByDate(date: string): Promise<BodyWeightLog | undefined> {
+  return db.bodyWeightLogs.where('date').equals(date).first();
+}
+
 export async function getAllBodyWeightLogs(): Promise<BodyWeightLog[]> {
   return db.bodyWeightLogs.orderBy('date').toArray();
 }

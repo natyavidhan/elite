@@ -103,7 +103,7 @@ export function CardioLogRun() {
         </label>
       )}
 
-      <Field label="Date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+      <Field label="Date" type="date" value={date} max={today()} onChange={(e) => setDate(e.target.value)} />
 
       <label className="block">
         <span className="plate-caption text-[10px] block mb-1">Activity</span>

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
+import { Link, useSearchParams } from 'react-router-dom';
+import { format, parseISO } from 'date-fns';
 import { Plus } from 'lucide-react';
 import { LinkButton } from '@/components/ui/Button';
 import { FoodLogCard } from '@/components/FoodLogCard';
-import { today } from '@/db/schema';
+import { today, isValidDateParam } from '@/db/schema';
 import { getFoodLogsForDate, getDailyTotals, deleteFoodLog, type FoodLogEntry, type DailyTotals } from '@/db/foodDb';
 import { getSettings, type AppSettings } from '@/db/settingsDb';
 import type { MealType } from '@/db/schema';
@@ -17,7 +17,14 @@ const MEALS: { type: MealType; label: string }[] = [
 ];
 
 export function Food() {
-  const date = today();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const dateParam = searchParams.get('date');
+  const date = isValidDateParam(dateParam) ? dateParam : today();
+
+  function handleDateChange(newDate: string) {
+    setSearchParams(newDate === today() ? {} : { date: newDate }, { replace: true });
+  }
+
   const [entries, setEntries] = useState<FoodLogEntry[]>([]);
   const [totals, setTotals] = useState<DailyTotals>({ calories: 0, protein: 0, carbs: 0, fat: 0 });
   const [settings, setSettings] = useState<AppSettings | null>(null);
@@ -42,7 +49,7 @@ export function Food() {
     <div className="space-y-5">
       <div className="flex items-start justify-between">
         <div>
-          <p className="plate-caption text-xs text-ink-500">{format(new Date(), 'EEEE, MMMM d')}</p>
+          <p className="plate-caption text-xs text-ink-500">{format(parseISO(date), 'EEEE, MMMM d')}</p>
           <h1 className="font-display text-3xl sm:text-4xl text-ink-900 mt-1">Food</h1>
         </div>
         <div className="flex flex-col items-end gap-1 mt-1 text-xs">
@@ -54,6 +61,17 @@ export function Food() {
           </Link>
         </div>
       </div>
+
+      <label className="block w-fit">
+        <span className="plate-caption text-[10px] block mb-1 text-ink-500">Date</span>
+        <input
+          type="date"
+          value={date}
+          max={today()}
+          onChange={(e) => handleDateChange(e.target.value)}
+          className="font-data bg-transparent border-b border-ink-900/25 focus:border-gold-600 py-1 text-sm focus:outline-none"
+        />
+      </label>
 
       <div className="bg-paper-100 border border-paper-400 shadow-plate rounded-lg p-4 sm:p-6 space-y-3">
         <MacroBar
@@ -85,7 +103,7 @@ export function Food() {
                 ))}
               </div>
             )}
-            <LinkButton to={`/food/search?meal=${type}`} variant="ghost" className="!px-0 text-xs">
+            <LinkButton to={`/food/search?meal=${type}&date=${date}`} variant="ghost" className="!px-0 text-xs">
               <Plus size={14} /> Add Food
             </LinkButton>
           </div>

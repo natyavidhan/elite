@@ -5,7 +5,7 @@ import { Camera, ChevronLeft } from 'lucide-react';
 // @zxing/browser is only needed once scanning actually starts.
 const BarcodeScanner = lazy(() => import('@/components/BarcodeScanner').then((m) => ({ default: m.BarcodeScanner })));
 import { Button } from '@/components/ui/Button';
-import { today } from '@/db/schema';
+import { today, isValidDateParam } from '@/db/schema';
 import type { FoodItem, MealType } from '@/db/schema';
 import { searchLocalFoodItems, upsertFoodItem, logFood } from '@/db/foodDb';
 import { lookupBarcode, searchUsda } from '@/utils/nutritionApi';
@@ -14,6 +14,8 @@ export function FoodSearch() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const mealType = (params.get('meal') as MealType) ?? 'snack';
+  const dateParam = params.get('date');
+  const date = isValidDateParam(dateParam) ? dateParam : today();
 
   const [query, setQuery] = useState('');
   const [localResults, setLocalResults] = useState<FoodItem[]>([]);
@@ -56,7 +58,15 @@ export function FoodSearch() {
   }
 
   if (selected) {
-    return <QuantitySheet item={selected} mealType={mealType} onBack={() => setSelected(null)} onLogged={() => navigate('/food')} />;
+    return (
+      <QuantitySheet
+        item={selected}
+        mealType={mealType}
+        date={date}
+        onBack={() => setSelected(null)}
+        onLogged={() => navigate(date === today() ? '/food' : `/food?date=${date}`)}
+      />
+    );
   }
 
   return (
@@ -124,11 +134,13 @@ export function FoodSearch() {
 function QuantitySheet({
   item,
   mealType,
+  date,
   onBack,
   onLogged,
 }: {
   item: FoodItem;
   mealType: MealType;
+  date: string;
   onBack: () => void;
   onLogged: () => void;
 }) {
@@ -139,7 +151,7 @@ function QuantitySheet({
   async function handleLog() {
     if (g <= 0) return;
     const id = await upsertFoodItem(item);
-    await logFood({ date: today(), foodItemId: id, mealType, quantityG: g });
+    await logFood({ date, foodItemId: id, mealType, quantityG: g });
     onLogged();
   }
 

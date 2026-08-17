@@ -261,3 +261,10 @@ for (const name of KEY_SYNCED_TABLES) {
 export function today(): string {
   return new Date().toLocaleDateString('en-CA'); // 'YYYY-MM-DD' in local time
 }
+
+/** Narrows a URL search param to a real 'YYYY-MM-DD' date string — used
+ * anywhere a page reads its working date from `?date=` instead of always
+ * assuming today, so a malformed or missing param falls back safely. */
+export function isValidDateParam(value: string | null): value is string {
+  return !!value && /^\d{4}-\d{2}-\d{2}$/.test(value);
+}

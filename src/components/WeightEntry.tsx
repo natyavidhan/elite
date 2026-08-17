@@ -5,12 +5,13 @@ import { kgToLbs, lbsToKg } from '@/utils/unitConversion';
 import type { BodyWeightLog } from '@/db/schema';
 
 interface Props {
+  date: string;
   existing?: BodyWeightLog;
   unit: 'kg' | 'lbs';
   onSaved: () => void;
 }
 
-export function WeightEntry({ existing, unit, onSaved }: Props) {
+export function WeightEntry({ date, existing, unit, onSaved }: Props) {
   const initial = existing ? (unit === 'kg' ? existing.weightKg : kgToLbs(existing.weightKg)) : undefined;
   const [weight, setWeight] = useState(initial ? initial.toFixed(1) : '');
   const [bodyFat, setBodyFat] = useState(existing?.bodyFatPct ? String(existing.bodyFatPct) : '');
@@ -20,7 +21,7 @@ export function WeightEntry({ existing, unit, onSaved }: Props) {
     const value = parseFloat(weight);
     if (isNaN(value) || value <= 0) return;
     const weightKg = unit === 'kg' ? value : lbsToKg(value);
-    await upsertBodyWeight({ weightKg, bodyFatPct: bodyFat ? parseFloat(bodyFat) : undefined, notes: notes || undefined });
+    await upsertBodyWeight({ date, weightKg, bodyFatPct: bodyFat ? parseFloat(bodyFat) : undefined, notes: notes || undefined });
     onSaved();
   }
 
