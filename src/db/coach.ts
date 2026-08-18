@@ -1,8 +1,15 @@
 import { API_BASE, isBackendConfigured, authHeaders } from '@/utils/apiBase';
+import type { CoachVisualizationData } from '@/components/CoachVisualization';
 
 export interface CoachMessage {
   role: 'user' | 'assistant';
   content: string;
+  visualization?: CoachVisualizationData;
+}
+
+export interface CoachReply {
+  content: string;
+  visualization?: CoachVisualizationData;
 }
 
 export type CoachAvailability = 'unknown' | 'unavailable' | 'available';
@@ -44,15 +51,17 @@ export async function checkCoachAvailability(): Promise<void> {
   }
 }
 
-export async function sendCoachMessage(messages: CoachMessage[]): Promise<string> {
+export async function sendCoachMessage(messages: CoachMessage[]): Promise<CoachReply> {
   const res = await fetch(`${API_BASE}/api/coach/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages: messages.map((m) => ({ role: m.role, content: m.content })) }),
   });
-  const data = (await res.json().catch(() => null)) as { message?: { content: string }; error?: string } | null;
+  const data = (await res.json().catch(() => null)) as
+    | { message?: { content: string }; visualization?: CoachVisualizationData; error?: string }
+    | null;
   if (!res.ok || !data) {
     throw new Error(data?.error ?? `Coach request failed: ${res.status}`);
   }
-  return data.message?.content ?? '';
+  return { content: data.message?.content ?? '', visualization: data.visualization };
 }

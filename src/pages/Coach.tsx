@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Send, Sparkles } from 'lucide-react';
 import { sendCoachMessage, type CoachMessage } from '@/db/coach';
+import { CoachVisualization } from '@/components/CoachVisualization';
 
 const SUGGESTIONS = [
   'Why has my bench press plateaued?',
@@ -32,7 +33,7 @@ export function Coach() {
     setSending(true);
     try {
       const reply = await sendCoachMessage(next);
-      setMessages([...next, { role: 'assistant', content: reply }]);
+      setMessages([...next, { role: 'assistant', content: reply.content, visualization: reply.visualization }]);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'The coach could not respond. Try again.');
     } finally {
@@ -71,8 +72,11 @@ export function Coach() {
             {m.role === 'user' ? (
               <div className="max-w-[85%] rounded-lg bg-gold-600 text-paper-100 px-4 py-2.5 text-sm">{m.content}</div>
             ) : (
-              <div className="max-w-[85%] rounded-lg bg-paper-100 border border-paper-400 px-4 py-3 text-sm text-ink-900 coach-markdown">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+              <div className={`${m.visualization ? 'max-w-[95%] w-full' : 'max-w-[85%]'} rounded-lg bg-paper-100 border border-paper-400 px-4 py-3 text-sm text-ink-900`}>
+                <div className="coach-markdown">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.content}</ReactMarkdown>
+                </div>
+                {m.visualization && <CoachVisualization {...m.visualization} />}
               </div>
             )}
           </div>

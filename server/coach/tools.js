@@ -169,6 +169,38 @@ function getWeeklyMuscleSummary({ days = 7 } = {}) {
   return { days, sessionsLogged: sessions.length, trainedMuscles: ranked };
 }
 
+/** Which exercises make up a muscle's training volume, and what share of it
+ * each one is — e.g. "my tricep split": how much of it is pushdowns vs.
+ * overhead extensions. Same primary(full)/secondary(half) credit as every
+ * other muscle-volume calc in this file, so the split is consistent with
+ * what the muscle map itself shows. */
+function getMuscleExerciseSplit({ muscle, days = 30 }) {
+  const since = dateNDaysAgo(days);
+  const sessions = getTableRows('workoutSessions').filter((s) => s.date >= since);
+  const sessionIds = new Set(sessions.map((s) => s.id));
+  const sets = getTableRows('workoutSets').filter((s) => sessionIds.has(s.sessionId));
+  const exIndex = buildExerciseIndex();
+
+  const byExercise = new Map();
+  for (const s of sets) {
+    const ex = exIndex.get(s.exerciseId);
+    if (!ex) continue;
+    const isPrimary = ex.primaryMuscles.includes(muscle);
+    const isSecondary = ex.secondaryMuscles.includes(muscle);
+    if (!isPrimary && !isSecondary) continue;
+    const load = s.weightKg * s.reps * (isPrimary ? 1 : 0.5);
+    byExercise.set(ex.name, (byExercise.get(ex.name) ?? 0) + load);
+  }
+  if (byExercise.size === 0) {
+    return { muscle, days, totalVolume: 0, breakdown: [], note: `No sets trained ${muscle} in this window.` };
+  }
+  const totalVolume = [...byExercise.values()].reduce((a, b) => a + b, 0);
+  const breakdown = [...byExercise.entries()]
+    .map(([exercise, volume]) => ({ exercise, volume: Math.round(volume), percent: Math.round((volume / totalVolume) * 1000) / 10 }))
+    .sort((a, b) => b.volume - a.volume);
+  return { muscle, days, totalVolume: Math.round(totalVolume), breakdown };
+}
+
 function getFoodLog({ date }) {
   const logs = getTableRows('foodLogs').filter((l) => l.date === date);
   const items = new Map(getTableRows('foodItems').map((i) => [i.id, i]));
@@ -321,6 +353,7 @@ export const TOOLS = {
   get_personal_records: getPersonalRecords,
   get_muscle_volume: getMuscleVolume,
   get_weekly_muscle_summary: getWeeklyMuscleSummary,
+  get_muscle_exercise_split: getMuscleExerciseSplit,
   get_food_log: getFoodLog,
   get_nutrition_trend: getNutritionTrend,
   get_cardio_summary: getCardioSummary,
@@ -379,6 +412,25 @@ export const TOOL_SCHEMAS = [
   {
     type: 'function',
     function: {
+      name: 'get_muscle_exercise_split',
+      description:
+        'Which exercises make up a muscle\'s trained volume and what share of it each one is, over the last N days — e.g. "what\'s my tricep split" (pushdowns vs. overhead extensions vs. skull crushers). This is the tool for composition/breakdown/split questions about one muscle, as opposed to get_weekly_muscle_summary which ranks muscles against each other.',
+      parameters: {
+        type: 'object',
+        properties: {
+          muscle: {
+            type: 'string',
+            enum: ['chest', 'triceps', 'shoulder', 'lats', 'bicep', 'forearm', 'traps', 'quads', 'hamstrings', 'glutes', 'calves', 'abs'],
+          },
+          days: { type: 'integer', description: 'Window size, default 30' },
+        },
+        required: ['muscle'],
+      },
+    },
+  },
+  {
+    type: 'function',
+    function: {
       name: 'get_food_log',
       description: 'Everything logged for one specific date: each entry with macros, and the day total.',
       parameters: { type: 'object', properties: { date: { type: 'string', description: 'YYYY-MM-DD' } }, required: ['date'] },
@@ -414,6 +466,42 @@ export const TOOL_SCHEMAS = [
       name: 'get_consistency',
       description: 'Per-day whether the user logged a workout, food, cardio, and body weight over the last N days — use for "how consistent have I been" questions.',
       parameters: { type: 'object', properties: { days: { type: 'integer', description: 'Window size, default 14' } } },
+    },
+  },
+  // Executed specially in agent.js (it needs the running conversation to
+  // look up a prior tool call's result), not listed in TOOLS above.
+  {
+    type: 'function',
+    function: {
+      name: 'render_chart',
+      description:
+        'Displays a chart or table to the user instead of describing numbers in prose. Use it whenever the user asks to "see", "show", "chart", "graph", or "plot" something, or a trend/ranking/comparison would read more clearly visually than as a paragraph. Call a data tool FIRST in this same turn — this tool does not accept numbers directly, it reads them straight out of that tool call\'s own result, so nothing gets retyped or mistyped. After calling this, keep your text reply to one short sentence — the chart already shows the numbers.',
+      parameters: {
+        type: 'object',
+        properties: {
+          sourceTool: { type: 'string', description: 'The exact name of the data tool you called earlier in this turn that has the numbers to chart, e.g. "get_exercise_trend".' },
+          rowsPath: {
+            type: 'string',
+            description:
+              'Dot path to the array within that result, e.g. "history", "dailyTotals", "trainedMuscles", "entries", "sessions", "daily". Leave blank if the result IS the array (e.g. get_personal_records).',
+          },
+          chartType: {
+            type: 'string',
+            enum: ['line', 'bar', 'pie', 'table'],
+            description:
+              'line for a trend over time/sessions, bar for a ranking/comparison across categories, pie for a composition/split/breakdown of one whole into parts (e.g. "what\'s my tricep split" — use with get_muscle_exercise_split), table when rows have several fields or none of the above would read well.',
+          },
+          xKey: { type: 'string', description: 'Field to use as the x-axis / row label, or the slice label for "pie" — e.g. "date", "muscle", "exercise".' },
+          yKeys: {
+            type: 'array',
+            items: { type: 'string' },
+            description:
+              'Field name(s) to plot as values, e.g. ["bestWeightKg"] or ["calories","protein"]. For "pie", exactly one field (e.g. ["percent"] or ["volume"]). For "table", list every column to show, including xKey.',
+          },
+          title: { type: 'string' },
+        },
+        required: ['sourceTool', 'chartType', 'xKey', 'yKeys', 'title'],
+      },
     },
   },
 ];
