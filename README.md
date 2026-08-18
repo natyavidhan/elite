@@ -11,7 +11,7 @@ A local-first PWA for tracking workouts, food, cardio, and body weight — built
 - **Cardio** — session log with presets that scale by a multiplier ("Evening Cycling" × 1.5)
 - **Body Weight** — daily log with trend chart and rolling average
 - **Home** — GitHub-style consistency heatmap + 14-day trend charts across all four
-- **AI Coach** — ask it about your training in plain language; it calls tools against your real logs (workouts, food, cardio, weight) rather than guessing. Backend-only — see below
+- **AI Coach** — ask it about your training in plain language ("why has my bench plateaued", "what's my tricep split") and it calls tools against your real logs rather than guessing, charting a trend, ranking, or breakdown on request. Backend-only — see below
 - **Dark mode** — light, dark, or system, set in Settings
 
 ![Home dashboard heatmap and trend cards](screenshots/home.png)
@@ -20,7 +20,7 @@ No account, no backend required — everything lives in IndexedDB on your device
 
 ## Stack
 
-React + Vite + TypeScript, Dexie (IndexedDB), Tailwind, Recharts, `vite-plugin-pwa`. Optional sync server: Express + SQLite (`better-sqlite3`). Optional AI Coach: Groq, tool-calling only (no RAG/vector store).
+React + Vite + TypeScript, Dexie (IndexedDB), Tailwind, Recharts, `vite-plugin-pwa`. Optional sync server: Express + SQLite (`better-sqlite3`). Optional AI Coach: any OpenAI-compatible provider (Groq, OpenCode, ...), tool-calling only (no RAG/vector store).
 
 ## Run it
 
@@ -47,10 +47,24 @@ Running the frontend and server separately instead (e.g. the app on Vercel, the 
 
 ### AI Coach
 
-Optional, and only shows up in the app once it's configured. It's entirely server-side — the frontend never talks to Groq directly, and there's no client-side key to steal. Get a free key at [console.groq.com/keys](https://console.groq.com/keys) and pass it as `GROQ_API_KEY`:
+Optional, and only shows up in the app once it's configured. It's entirely server-side — the frontend never talks to the model provider directly, and there's no client-side key to steal. Works against any OpenAI-compatible chat-completions API that supports tool calling; `COACH_PROVIDER` picks a known-good preset:
 
 ```bash
-docker run -d -p 8080:8080 -v elite-data:/data -e GROQ_API_KEY=gsk_... --name elite elite
+# Groq — free tier, https://console.groq.com/keys — capped around 8000
+# tokens/min, which a multi-tool question can hit; fine for occasional use.
+docker run -d -p 8080:8080 -v elite-data:/data \
+  -e COACH_PROVIDER=groq -e COACH_API_KEY=gsk_... --name elite elite
+
+# OpenCode Go — https://opencode.ai/docs/go — a $10/mo subscription with a
+# much larger quota (hours/week/month budgets, not a tight per-minute cap).
+docker run -d -p 8080:8080 -v elite-data:/data \
+  -e COACH_PROVIDER=opencode -e COACH_API_KEY=sk-... --name elite elite
 ```
 
-Unlike `SYNC_TOKEN`, this is read at container start — no rebuild needed to add, change, or remove it. The coach answers by calling tools against your synced data (recent workouts, exercise trends, PRs, muscle volume, food/macros, cardio, body weight) — it doesn't see anything that hasn't synced to the server yet.
+Point it at something else entirely with `COACH_BASE_URL`/`COACH_MODEL` instead of `COACH_PROVIDER` — see `server/.env.example`. Unlike `SYNC_TOKEN`, all of these are read at container start — no rebuild needed to add, change, or swap providers.
+
+![AI Coach answering a plateau question and charting a tricep-exercise split as a pie chart](screenshots/coach.png)
+
+The coach answers by calling tools against your synced data (recent workouts, exercise trends, PRs, muscle volume and its breakdown by exercise, food/macros, cardio, body weight, consistency) — it doesn't see anything that hasn't synced to the server yet — and can render a line chart, bar chart, pie chart, or table inline when a question calls for one, reading the numbers straight out of its own prior tool call rather than retyping them into the chart (so a chart can't silently show the wrong numbers the way an LLM re-transcribing figures into prose sometimes can).
+
+A single question can take 2-3 model round-trips (more if it also renders a chart), so which provider you pick matters more here than for typical chat use — a tight free-tier rate limit is the most likely source of an occasional "try again in a moment."
