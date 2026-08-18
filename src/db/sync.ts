@@ -90,11 +90,32 @@ async function applyIncomingTombstone(tomb: Tombstone): Promise<void> {
   if (existing) await t.delete(existing.id as never);
 }
 
+/** One row failing to apply — e.g. a unique-index collision from two
+ * different devices both creating "today's session" before either had
+ * pulled the other's — must never take the rest of the sync down with it.
+ * Before this, a single bad row threw out of the whole loop, which meant
+ * every later table in that same response silently never got applied, AND
+ * the failure repeated forever: lastSyncedAt never advances past a caught
+ * error, so the next sync just re-fetches the same poisoned row and fails
+ * the same way again. Skipping and logging trades a single row staying
+ * momentarily out of sync for the rest of the data actually landing. */
 async function applyIncoming(changes: ChangesPayload, tombstones: Tombstone[]): Promise<void> {
   for (const [table, rows] of Object.entries(changes) as [SyncedTable, Array<Record<string, unknown>>][]) {
-    for (const row of rows) await applyIncomingRow(table, row);
+    for (const row of rows) {
+      try {
+        await applyIncomingRow(table, row);
+      } catch (e) {
+        console.error(`Sync: skipping ${table} row (uuid=${row.uuid}) — failed to apply:`, e);
+      }
+    }
   }
-  for (const tomb of tombstones) await applyIncomingTombstone(tomb);
+  for (const tomb of tombstones) {
+    try {
+      await applyIncomingTombstone(tomb);
+    } catch (e) {
+      console.error(`Sync: skipping tombstone (table=${tomb.table} uuid=${tomb.uuid}) — failed to apply:`, e);
+    }
+  }
 }
 
 let syncing = false;
