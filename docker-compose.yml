@@ -12,9 +12,15 @@ services:
       # read at container start.
       - SYNC_TOKEN=
       # Optional — enables the AI Coach tab (backend-only). Read at
-      # container start, so changing it just needs a restart, not a
-      # rebuild. Get a free key at https://console.groq.com/keys
-      - GROQ_API_KEY=
+      # container start, so changing any of these just needs a restart,
+      # not a rebuild. COACH_PROVIDER picks a known-good preset
+      # (groq | opencode); COACH_BASE_URL/COACH_MODEL override either
+      # independently for a different model or a different OpenAI-
+      # compatible provider entirely. See server/.env.example.
+      - COACH_PROVIDER=groq
+      - COACH_API_KEY=
+      # - COACH_BASE_URL=
+      # - COACH_MODEL=
     restart: unless-stopped
 
 volumes:

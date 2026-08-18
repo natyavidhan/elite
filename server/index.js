@@ -1,19 +1,11 @@
+import './env.js';
 import express from 'express';
 import cors from 'cors';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { syncRouter } from './sync.js';
 import { coachRouter } from './coach/route.js';
-
-// Convenience for local dev / bare-metal runs — a `server/.env` file, if
-// present, populates process.env (Node >= 20.6, no dependency needed). The
-// Docker deployment doesn't need this at all: it gets GROQ_API_KEY etc. as
-// real -e/--env-file variables at `docker run` time.
-try {
-  process.loadEnvFile();
-} catch {
-  // No .env file — expected for the Docker deploy path.
-}
+import { isCoachConfigured } from './coach/config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT) || 8080;
@@ -25,9 +17,9 @@ app.use(cors());
 app.use(express.json({ limit: '15mb' }));
 
 // coachEnabled tells the frontend whether to show the AI Coach tab at all —
-// it's backend-only (needs a server-held Groq key), so a deployment without
-// GROQ_API_KEY set just doesn't offer it, no client-side error state needed.
-app.get('/api/health', (_req, res) => res.json({ ok: true, time: Date.now(), coachEnabled: Boolean(process.env.GROQ_API_KEY) }));
+// it's backend-only (needs a server-held key), so a deployment without
+// COACH_API_KEY set just doesn't offer it, no client-side error state needed.
+app.get('/api/health', (_req, res) => res.json({ ok: true, time: Date.now(), coachEnabled: isCoachConfigured }));
 
 // Only /api/sync and /api/coach need protecting — health stays open for
 // container/uptime checks. Skipped entirely when SYNC_TOKEN isn't set, so a
